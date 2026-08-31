@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CoreCycle — Prototipo V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFE7D6; --paper2:#FBF8F0; --ink:#26241F; --ink-soft:#5B584E;
+    --petrol:#1E4640; --petrol2:#2C5C54; --rust:#B5502E; --ochre:#C99A2E;
+    --sage:#6B8F71; --line:rgba(38,36,31,.16);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
+  .serif{font-family:'Fraunces',Georgia,serif}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line)}
+  .head-in{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 0}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:40px;height:40px;border-radius:6px;background:var(--petrol);color:var(--ochre);
+    display:flex;align-items:center;justify-content:center;font-size:20px}
+  .brand h1{font-family:'Fraunces',serif;font-size:21px;font-weight:600;margin:0;line-height:1}
+  .brand p{margin:3px 0 0;font-size:12px;color:var(--ink-soft)}
+  .toggle{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .toggle button{border:0;background:transparent;padding:7px 13px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+  .toggle button.on{background:var(--petrol);color:var(--paper2)}
+  main{padding:24px 0 60px}
+  .cols{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+  .side{width:300px;flex:0 0 auto;display:flex;flex-direction:column;gap:16px}
+  .main-col{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:20px}
+  .ticket{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:24px 20px 20px;
+    background-image:radial-gradient(circle at center,var(--paper) 5.2px,transparent 5.6px);
+    background-size:18px 14px;background-repeat:repeat-x;background-position:top left}
+  h2.sec{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0}
+  h3.sec{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin:0}
+  .muted{color:var(--ink-soft)}
+  .small{font-size:13px}
+  .xs{font-size:12px}
+  button.primary{background:var(--petrol);color:var(--paper2);border:0;border-radius:6px;
+    padding:9px 16px;font:inherit;font-size:14px;cursor:pointer}
+  button.primary:hover{background:var(--petrol2)}
+  button.primary:disabled{opacity:.4;cursor:not-allowed}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:6px;
+    padding:7px 12px;font:inherit;font-size:13px;cursor:pointer}
+  button.ghost:hover{background:var(--paper)}
+  button.ghost:disabled{opacity:.4;cursor:not-allowed}
+  input,select{border:1px solid var(--line);background:var(--paper2);border-radius:6px;
+    padding:9px 10px;font:inherit;font-size:14px;width:100%;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--petrol);outline-offset:1px}
+  label.f{display:flex;flex-direction:column;gap:4px}
+  label.f>span{font-size:12px;color:var(--ink-soft)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.side{width:100%}}
+  .lot{display:block;width:100%;text-align:left;background:var(--paper2);border:1px solid var(--line);
+    border-radius:6px;padding:11px;cursor:pointer;font:inherit;margin-bottom:8px;color:var(--ink)}
+  .lot.on{background:var(--petrol);color:var(--paper2);border-color:var(--petrol)}
+  .lot .t{font-size:14px;font-weight:500}
+  .lot .s{font-size:12px;opacity:.75;margin-top:2px}
+  .row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:2px 0}
+  .row b{font-weight:600}
+  .hr{height:1px;background:var(--line);margin:8px 0}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);
+    border-radius:999px;padding:4px 10px;font-size:12px;margin:0 4px 4px 0}
+  .chip img{width:18px;height:18px;border-radius:999px;object-fit:cover}
+  .steps{display:flex;min-width:440px}
+  .steps-wrap{overflow-x:auto}
+  .step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px}
+  .dot{width:32px;height:32px;border-radius:999px;border:1px solid var(--line);background:var(--paper);
+    display:flex;align-items:center;justify-content:center;font-size:15px}
+  .dot.on{background:var(--petrol);border-color:var(--petrol);color:var(--paper2)}
+  .step span{font-size:12px;text-align:center;line-height:1.25;max-width:100px;color:var(--ink-soft)}
+  .step.on span{color:var(--ink)}
+  .bar{flex:1;height:1px;background:var(--line);margin:16px 2px 0}
+  .bar.on{background:var(--petrol)}
+  .action{display:flex;gap:12px;align-items:flex-start}
+  .action .ic{width:36px;height:36px;border-radius:6px;background:var(--paper);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:17px}
+  .pts{font-family:'IBM Plex Mono',monospace;font-size:30px;color:var(--petrol);margin:2px 0 12px}
+  .catrow{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin-bottom:7px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-weight:400;color:var(--ink-soft);padding-bottom:4px;font-size:13px}
+  td{padding:2px 0}
+  td.n,th.n{text-align:right;font-family:'IBM Plex Mono',monospace}
+  .cert{border:1px solid var(--line);border-radius:8px;padding:16px}
+  .badge{background:var(--paper);border-radius:6px;padding:9px 12px;display:flex;
+    justify-content:space-between;align-items:center;margin-top:12px;font-size:14px}
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    text-align:center;min-height:320px}
+  .item{border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:12px}
+  .item-top{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+  .filelbl{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:6px;
+    padding:6px 10px;font-size:12px;cursor:pointer}
+  .filelbl input{display:none}
+  .thumb{width:38px;height:38px;object-fit:cover;border-radius:4px;border:1px solid var(--line);margin-left:10px;vertical-align:middle}
+  @media print{.noprint{display:none!important} body{background:#fff}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-in">
+    <div class="brand">
+      <div class="logo">♻</div>
+      <div>
+        <h1>CoreCycle</h1>
+        <p>Prototipo V2 — recolección de voluminosos en propiedad horizontal</p>
+      </div>
+    </div>
+    <div class="toggle noprint">
+      <button id="r-admin">Administrador</button>
+      <button id="r-ops">Operativo CoreCycle</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="cols">
+    <div class="side noprint">
+      <div id="pointsBox"></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h2 class="sec">Lotes</h2>
+          <button class="primary" id="newLot" style="padding:6px 12px;font-size:13px">+ Nuevo lote</button>
+        </div>
+        <div id="lotList"></div>
+      </div>
+    </div>
+    <div class="main-col" id="detail"></div>
+  </div>
+</main>
+
+<script>
+const ITEM_TYPES={
+  sofa:{label:'Sofá / sillón',servicio:40000,deposito:70000},
+  colchon:{label:'Colchón',servicio:20000,deposito:15000},
+  mesa:{label:'Mesa / silla suelta',servicio:25000,deposito:25000},
+  closet:{label:'Closet / mueble grande',servicio:35000,deposito:45000},
+  electro:{label:'Electrodoméstico',servicio:30000,deposito:35000},
+  otro:{label:'Otro objeto voluminoso',servicio:20000,deposito:20000}
+};
+const MATERIALS={
+  madera:{label:'Madera',rate:700},
+  metal:{label:'Metal / acero',rate:1200},
+  tapiceria:{label:'Tapicería / textil',rate:250},
+  espuma:{label:'Espuma',rate:50},
+  otro:{label:'Otro material',rate:300}
+};
+const CATALOGO=[
+  {id:'focos',label:'Focos y bombillos para zonas comunes',costo:50},
+  {id:'aseo',label:'Insumos de aseo (bolsas, limpieza)',costo:80},
+  {id:'jardin',label:'Visita adicional de jardinería',costo:150},
+  {id:'mant',label:'Mantenimiento menor (pintura, cerrajería)',costo:300}
+];
+const STEPS=[
+  {key:'cotizado',label:'Cotización en firme',icon:'📄'},
+  {key:'agendado',label:'Ruta agendada',icon:'📅'},
+  {key:'recogido',label:'Recogido',icon:'🚚'},
+  {key:'cerrado',label:'Clasificado y certificado',icon:'🏅'}
+];
+const ORDER=STEPS.map(s=>s.key);
+
+let uid=1; const nid=()=>uid++;
+const S={role:'admin',lots:[],sel:null,form:null,points:0,redemptions:[]};
+
+const money=n=>n.toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});
+const fdate=d=>d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const stepLabel=k=>(STEPS.find(s=>s.key===k)||{}).label||k;
+
+function quote(items){
+  let servicio=0,deposito=0;
+  items.forEach(it=>{const d=ITEM_TYPES[it.tipo];servicio+=d.servicio*it.cantidad;deposito+=d.deposito*it.cantidad;});
+  const now=new Date();
+  const desde=new Date(now); desde.setDate(now.getDate()+1);
+  const hasta=new Date(now); hasta.setDate(now.getDate()+2);
+  return {servicio,deposito,total:servicio+deposito,desde,hasta};
+}
+
+/* ---------- render ---------- */
+function render(){
+  document.getElementById('r-admin').className=S.role==='admin'?'on':'';
+  document.getElementById('r-ops').className=S.role==='ops'?'on':'';
+  document.getElementById('newLot').style.display=S.role==='admin'?'':'none';
+  renderPoints(); renderList(); renderDetail();
+}
+
+function renderPoints(){
+  const box=document.getElementById('pointsBox');
+  if(S.role!=='admin'){box.innerHTML='';return;}
+  box.innerHTML=`<div class="card">
+    <h2 class="sec">🪙 Puntos CoreCycle</h2>
+    <div class="pts">${S.points} <span class="small muted">pts</span></div>
+    ${CATALOGO.map(c=>`<div class="catrow"><span>${esc(c.label)}</span>
+      <button class="ghost" data-redeem="${c.id}" ${S.points<c.costo?'disabled':''}>${c.costo} pts</button></div>`).join('')}
+    ${S.redemptions.length?`<div class="hr"></div><p class="xs muted" style="margin:0 0 4px">Canjes recientes</p>
+      ${S.redemptions.slice(0,3).map(r=>`<div class="xs muted">${fdate(r.fecha)} · ${esc(r.label)}</div>`).join('')}`:''}
+  </div>`;
+  box.querySelectorAll('[data-redeem]').forEach(b=>b.onclick=()=>{
+    const it=CATALOGO.find(c=>c.id===b.dataset.redeem);
+    if(S.points<it.costo)return;
+    S.points-=it.costo; S.redemptions.unshift({...it,fecha:new Date()}); render();
+  });
+}
+
+function renderList(){
+  const el=document.getElementById('lotList');
+  if(!S.lots.length){
+    el.innerHTML=`<p class="small muted" style="margin:0">${S.role==='admin'
+      ?'Aún no hay lotes registrados. Crea el primero para ver la cotización en firme.'
+      :'No hay lotes pendientes de gestión operativa.'}</p>`;
+    return;
+  }
+  el.innerHTML=S.lots.map(l=>`<button class="lot ${l.id===S.sel?'on':''}" data-lot="${l.id}">
+    <div class="t">${esc(l.conjunto)}</div>
+    <div class="s">${stepLabel(l.status)} · ${fdate(l.createdAt)}</div></button>`).join('');
+  el.querySelectorAll('[data-lot]').forEach(b=>b.onclick=()=>{S.sel=+b.dataset.lot;S.form=null;render();});
+}
+
+function renderDetail(){
+  const el=document.getElementById('detail');
+  if(S.form){el.innerHTML=formHTML();bindForm();return;}
+  const lot=S.lots.find(l=>l.id===S.sel);
+  if(!lot){
+    el.innerHTML=`<div class="card empty">
+      <div style="font-size:28px">📦</div>
+      <p class="serif" style="font-size:18px;font-weight:600;margin:0">Selecciona o crea un lote</p>
+      <p class="small muted" style="max-width:320px;margin:0">Cada lote sigue el mismo recorrido: cotización en firme, ruta, recogida, clasificación y certificado de trazabilidad.</p>
+    </div>`; return;
+  }
+  const i=ORDER.indexOf(lot.status);
+  el.innerHTML=`
+    <div class="card">
+      <h2 class="serif" style="font-size:21px;font-weight:600;margin:0">${esc(lot.conjunto)}</h2>
+      <p class="small muted" style="margin:4px 0 0">
+        ${lot.contacto?'👤 '+esc(lot.contacto)+' &nbsp; ':''}
+        ${lot.direccion?'📍 '+esc(lot.direccion)+' &nbsp; ':''}
+        📅 Registrado ${fdate(lot.createdAt)}</p>
+      <div style="margin-top:14px">${lot.items.map(it=>`<span class="chip">
+        ${it.foto?`<img src="${it.foto}" alt="">`:''}${ITEM_TYPES[it.tipo].label} × ${it.cantidad}</span>`).join('')}</div>
+    </div>
+    <div class="card noprint"><div class="steps-wrap"><div class="steps">${
+      STEPS.map((s,k)=>{const done=k<=i,last=k===STEPS.length-1;
+        return `<div style="display:flex;align-items:flex-start;${last?'flex:0 0 auto':'flex:1 1 auto'}">
+          <div class="step ${done?'on':''}"><div class="dot ${done?'on':''}">${s.icon}</div><span>${s.label}</span></div>
+          ${last?'':`<div class="bar ${k<i?'on':''}"></div>`}</div>`;}).join('')
+    }</div></div></div>
+    ${ticketHTML(lot)}
+    ${actionsHTML(lot)}
+    ${lot.status==='cerrado'?certHTML(lot):''}`;
+  bindDetail(lot);
+}
+
+function ticketHTML(lot){
+  const q=lot.cotizacion;
+  return `<div class="ticket">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 class="sec">Cotización en firme</h3>
+      <span class="mono xs muted">#${String(lot.id).padStart(4,'0')}</span></div>
+    <div class="row"><span class="muted">Servicio de logística y transporte</span><span class="mono">${money(q.servicio)}</span></div>
+    <div class="row"><span class="muted">Depósito de materia prima recuperable (reembolsable)</span><span class="mono">${money(q.deposito)}</span></div>
+    <div class="hr"></div>
+    <div class="row"><b>Total a facturar</b><b class="mono">${money(q.total)}</b></div>
+    <p class="small muted" style="margin:12px 0 0">📅 Ventana de ruta: ${fdate(q.desde)} – ${fdate(q.hasta)}</p>
+    <p class="xs muted" style="margin:10px 0 0">El depósito se devuelve como Puntos CoreCycle según el valor real del material recuperado en planta — el desglose completo queda en el certificado de trazabilidad.</p>
+  </div>`;
+}
+
+function act(ic,title,text,btn){
+  return `<div class="card action"><div class="ic">${ic}</div><div>
+    <p class="small" style="margin:0;font-weight:500">${title}</p>
+    <p class="small muted" style="margin:2px 0 0">${text}</p>
+    ${btn?`<button class="primary" id="actBtn" style="margin-top:12px">${btn}</button>`:''}</div></div>`;
+}
+
+function actionsHTML(lot){
+  const q=lot.cotizacion, admin=S.role==='admin';
+  if(lot.status==='cotizado') return admin
+    ? act('📅','Confirmar y agendar','Confirma la cotización para reservar la ventana de ruta indicada.','Confirmar y agendar')
+    : act('📅','Pendiente de confirmación del administrador','El administrador aún no confirma esta cotización.');
+  if(lot.status==='agendado') return admin
+    ? act('🚚','Ruta agendada',`Ventana estimada: ${fdate(q.desde)} – ${fdate(q.hasta)}. Te avisaremos cuando el vehículo esté en camino.`)
+    : act('🚚','Ruta agendada',`Ventana: ${fdate(q.desde)} – ${fdate(q.hasta)}. Marca el lote cuando el vehículo recoja el material.`,'Marcar como recogido');
+  if(lot.status==='recogido') return admin
+    ? act('⚖️','Material en planta de clasificación','El equipo operativo está pesando y clasificando los materiales. El certificado y los puntos se generan automáticamente al terminar.')
+    : clasifHTML();
+  return '';
+}
+
+function clasifHTML(){
+  return `<div class="card">
+    <h3 class="sec">⚖️ Clasificación en planta</h3>
+    <p class="xs muted" style="margin:6px 0 14px">Registra manualmente el peso por tipo de material recuperado. El sistema calcula el valor, el reembolso y los puntos.</p>
+    <div class="grid3">${Object.entries(MATERIALS).map(([k,m])=>
+      `<label class="f"><span>${m.label} (kg)</span><input class="mono" type="number" min="0" step="0.5" value="0" data-kg="${k}"></label>`).join('')}</div>
+    <button class="primary" id="clasifBtn" style="margin-top:16px">🏅 Registrar clasificación y acreditar puntos</button>
+  </div>`;
+}
+
+function certHTML(lot){
+  const c=lot.clasificacion;
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px" class="noprint">
+      <h3 class="sec">✅ Certificado de trazabilidad</h3>
+      <button class="ghost" id="printBtn">🖨 Imprimir / descargar</button></div>
+    <div class="cert">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div><p class="serif" style="font-size:18px;font-weight:600;margin:0">${esc(lot.conjunto)}</p>
+        <p class="xs muted" style="margin:2px 0 0">Lote #${String(lot.id).padStart(4,'0')} · Clasificado el ${fdate(c.fecha)}</p></div>
+        <span style="font-size:20px">♻</span></div>
+      ${c.materiales.length?`<table><thead><tr><th>Material</th><th class="n">Kg</th><th class="n">Valor</th></tr></thead>
+        <tbody>${c.materiales.map(m=>`<tr><td>${m.label}</td><td class="n">${m.kg}</td><td class="n">${money(m.valor)}</td></tr>`).join('')}</tbody></table>`
+        :`<p class="small muted">No se recuperó material con valor en este lote.</p>`}
+      <div class="hr"></div>
+      <div class="row"><span class="muted">Total material recuperado</span><span class="mono">${c.kgTotal} kg</span></div>
+      <div class="row"><span class="muted">Valor recuperado</span><span class="mono">${money(c.valorRecuperado)}</span></div>
+      <div class="row"><b>Reembolso acreditado</b><b class="mono">${money(c.reembolso)}</b></div>
+      <div class="row"><span class="muted">Margen operativo de CoreCycle</span><span class="mono">${money(c.margen)}</span></div>
+      <div class="badge"><span>🪙 Puntos CoreCycle acreditados</span><b class="mono">${c.puntos} pts</b></div>
+      <p class="xs muted" style="margin:12px 0 0">${c.kgTotal} kg de material fueron desviados de la disposición informal y reincorporados a cadenas de reciclaje o reúso. Este documento respalda la gestión del administrador ante el consejo y la autoridad ambiental.</p>
+    </div></div>`;
+}
+
+function bindDetail(lot){
+  const b=document.getElementById('actBtn');
+  if(b) b.onclick=()=>{
+    if(lot.status==='cotizado') lot.status='agendado';
+    else if(lot.status==='agendado') lot.status='recogido';
+    render();
+  };
+  const cb=document.getElementById('clasifBtn');
+  if(cb) cb.onclick=()=>{
+    const mats=[];
+    document.querySelectorAll('[data-kg]').forEach(inp=>{
+      const kg=Math.max(0,Number(inp.value)||0); if(!kg)return;
+      const def=MATERIALS[inp.dataset.kg];
+      mats.push({label:def.label,kg,valor:kg*def.rate});
+    });
+    const valorRecuperado=mats.reduce((s,m)=>s+m.valor,0);
+    const dep=lot.cotizacion.deposito;
+    const reembolso=Math.min(valorRecuperado,dep);
+    lot.clasificacion={materiales:mats,valorRecuperado,reembolso,margen:dep-reembolso,
+      puntos:Math.floor(reembolso/1000),kgTotal:mats.reduce((s,m)=>s+m.kg,0),fecha:new Date()};
+    S.points+=lot.clasificacion.puntos;
+    lot.status='cerrado'; render();
+  };
+  const pb=document.getElementById('printBtn');
+  if(pb) pb.onclick=()=>window.print();
+}
+
+/* ---------- formulario ---------- */
+function newForm(){return {conjunto:'',contacto:'',direccion:'',items:[{id:nid(),tipo:'sofa',cantidad:1,foto:null}]};}
+
+function formHTML(){
+  const f=S.form;
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 class="serif" style="font-size:19px;font-weight:600;margin:0">Registrar lote</h2>
+      <button class="ghost" id="cancelBtn">✕</button></div>
+    <div class="grid2">
+      <label class="f"><span>Conjunto / edificio</span><input id="f-conjunto" value="${esc(f.conjunto)}" placeholder="Ej. Bellavista Imperial"></label>
+      <label class="f"><span>Contacto (administrador)</span><input id="f-contacto" value="${esc(f.contacto)}" placeholder="Ej. Marta Gómez"></label>
+    </div>
+    <label class="f" style="margin-top:12px"><span>Dirección</span><input id="f-direccion" value="${esc(f.direccion)}" placeholder="Ej. Cra 15 # 100-20"></label>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px">
+      <p class="small" style="margin:0;font-weight:500">Objetos a retirar</p>
+      <button class="ghost" id="addItem">+ Agregar objeto</button></div>
+    ${f.items.map(it=>`<div class="item">
+      <div class="item-top">
+        <label class="f" style="flex:1 1 180px"><span>Tipo de objeto</span>
+          <select data-tipo="${it.id}">${Object.entries(ITEM_TYPES).map(([k,v])=>
+            `<option value="${k}" ${it.tipo===k?'selected':''}>${v.label}</option>`).join('')}</select></label>
+        <label class="f" style="width:96px"><span>Cantidad</span>
+          <input type="number" min="1" value="${it.cantidad}" data-cant="${it.id}"></label>
+        ${f.items.length>1?`<button class="ghost" data-del="${it.id}">✕</button>`:''}
+      </div>
+      <div style="margin-top:10px">
+        <label class="filelbl">📷 ${it.foto?'Cambiar foto':'Tomar / subir foto'}
+          <input type="file" accept="image/*" data-foto="${it.id}"></label>
+        ${it.foto?`<img class="thumb" src="${it.foto}" alt="">`:''}
+      </div></div>`).join('')}
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+      <button class="ghost" id="cancelBtn2">Cancelar</button>
+      <button class="primary" id="submitBtn">✨ Generar cotización en firme</button></div>
+  </div>`;
+}
+
+function readForm(){
+  const f=S.form;
+  f.conjunto=document.getElementById('f-conjunto').value;
+  f.contacto=document.getElementById('f-contacto').value;
+  f.direccion=document.getElementById('f-direccion').value;
+  document.querySelectorAll('[data-tipo]').forEach(s=>{
+    const it=f.items.find(i=>i.id==s.dataset.tipo); if(it) it.tipo=s.value;});
+  document.querySelectorAll('[data-cant]').forEach(s=>{
+    const it=f.items.find(i=>i.id==s.dataset.cant); if(it) it.cantidad=Math.max(1,Number(s.value)||1);});
+}
+
+function bindForm(){
+  const cancel=()=>{S.form=null;render();};
+  document.getElementById('cancelBtn').onclick=cancel;
+  document.getElementById('cancelBtn2').onclick=cancel;
+  document.getElementById('addItem').onclick=()=>{
+    readForm(); S.form.items.push({id:nid(),tipo:'sofa',cantidad:1,foto:null}); render();};
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    readForm(); S.form.items=S.form.items.filter(i=>i.id!=b.dataset.del); render();});
+  document.querySelectorAll('[data-foto]').forEach(inp=>inp.onchange=()=>{
+    const file=inp.files&&inp.files[0]; if(!file)return;
+    readForm();
+    const it=S.form.items.find(i=>i.id==inp.dataset.foto);
+    it.foto=URL.createObjectURL(file); render();});
+  document.getElementById('submitBtn').onclick=()=>{
+    readForm();
+    const f=S.form;
+    if(!f.conjunto.trim()){document.getElementById('f-conjunto').focus();return;}
+    const lot={id:nid(),conjunto:f.conjunto.trim(),contacto:f.contacto.trim(),direccion:f.direccion.trim(),
+      createdAt:new Date(),items:f.items.map(i=>({...i})),status:'cotizado',
+      cotizacion:quote(f.items),clasificacion:null};
+    S.lots.unshift(lot); S.sel=lot.id; S.form=null; render();};
+}
+
+/* ---------- init ---------- */
+document.getElementById('r-admin').onclick=()=>{S.role='admin';render();};
+document.getElementById('r-ops').onclick=()=>{S.role='ops';S.form=null;render();};
+document.getElementById('newLot').onclick=()=>{S.form=newForm();render();};
+render();
+</script>
+</body>
+</html>
