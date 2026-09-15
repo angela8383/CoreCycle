@@ -1,105 +1,310 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CoreCycle — Prototipo V2</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="CoreCycle - marketplace de retiro de voluminosos en propiedad horizontal.">
+<title>CoreCycle Marketplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --paper:#EFE7D6; --paper2:#FBF8F0; --ink:#26241F; --ink-soft:#5B584E;
-    --petrol:#1E4640; --petrol2:#2C5C54; --rust:#B5502E; --ochre:#C99A2E;
-    --sage:#6B8F71; --line:rgba(38,36,31,.16);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
-  .serif{font-family:'Fraunces',Georgia,serif}
-  .mono{font-family:'IBM Plex Mono',monospace}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-  header{border-bottom:1px solid var(--line)}
-  .head-in{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 0}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:40px;height:40px;border-radius:6px;background:var(--petrol);color:var(--ochre);
-    display:flex;align-items:center;justify-content:center;font-size:20px}
-  .brand h1{font-family:'Fraunces',serif;font-size:21px;font-weight:600;margin:0;line-height:1}
-  .brand p{margin:3px 0 0;font-size:12px;color:var(--ink-soft)}
-  .toggle{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-  .toggle button{border:0;background:transparent;padding:7px 13px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
-  .toggle button.on{background:var(--petrol);color:var(--paper2)}
-  main{padding:24px 0 60px}
-  .cols{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
-  .side{width:300px;flex:0 0 auto;display:flex;flex-direction:column;gap:16px}
-  .main-col{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:16px}
-  .card{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:20px}
-  .ticket{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:24px 20px 20px;
-    background-image:radial-gradient(circle at center,var(--paper) 5.2px,transparent 5.6px);
-    background-size:18px 14px;background-repeat:repeat-x;background-position:top left}
-  h2.sec{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0}
-  h3.sec{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin:0}
-  .muted{color:var(--ink-soft)}
-  .small{font-size:13px}
-  .xs{font-size:12px}
-  button.primary{background:var(--petrol);color:var(--paper2);border:0;border-radius:6px;
-    padding:9px 16px;font:inherit;font-size:14px;cursor:pointer}
-  button.primary:hover{background:var(--petrol2)}
-  button.primary:disabled{opacity:.4;cursor:not-allowed}
-  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:6px;
-    padding:7px 12px;font:inherit;font-size:13px;cursor:pointer}
-  button.ghost:hover{background:var(--paper)}
-  button.ghost:disabled{opacity:.4;cursor:not-allowed}
-  input,select{border:1px solid var(--line);background:var(--paper2);border-radius:6px;
-    padding:9px 10px;font:inherit;font-size:14px;width:100%;color:var(--ink)}
-  input:focus,select:focus{outline:2px solid var(--petrol);outline-offset:1px}
-  label.f{display:flex;flex-direction:column;gap:4px}
-  label.f>span{font-size:12px;color:var(--ink-soft)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.side{width:100%}}
-  .lot{display:block;width:100%;text-align:left;background:var(--paper2);border:1px solid var(--line);
-    border-radius:6px;padding:11px;cursor:pointer;font:inherit;margin-bottom:8px;color:var(--ink)}
-  .lot.on{background:var(--petrol);color:var(--paper2);border-color:var(--petrol)}
-  .lot .t{font-size:14px;font-weight:500}
-  .lot .s{font-size:12px;opacity:.75;margin-top:2px}
-  .row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:2px 0}
-  .row b{font-weight:600}
-  .hr{height:1px;background:var(--line);margin:8px 0}
-  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);
-    border-radius:999px;padding:4px 10px;font-size:12px;margin:0 4px 4px 0}
-  .chip img{width:18px;height:18px;border-radius:999px;object-fit:cover}
-  .steps{display:flex;min-width:440px}
-  .steps-wrap{overflow-x:auto}
-  .step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:100px}
-  .dot{width:32px;height:32px;border-radius:999px;border:1px solid var(--line);background:var(--paper);
-    display:flex;align-items:center;justify-content:center;font-size:15px}
-  .dot.on{background:var(--petrol);border-color:var(--petrol);color:var(--paper2)}
-  .step span{font-size:12px;text-align:center;line-height:1.25;max-width:100px;color:var(--ink-soft)}
-  .step.on span{color:var(--ink)}
-  .bar{flex:1;height:1px;background:var(--line);margin:16px 2px 0}
-  .bar.on{background:var(--petrol)}
-  .action{display:flex;gap:12px;align-items:flex-start}
-  .action .ic{width:36px;height:36px;border-radius:6px;background:var(--paper);flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center;font-size:17px}
-  .pts{font-family:'IBM Plex Mono',monospace;font-size:30px;color:var(--petrol);margin:2px 0 12px}
-  .catrow{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin-bottom:7px}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th{text-align:left;font-weight:400;color:var(--ink-soft);padding-bottom:4px;font-size:13px}
-  td{padding:2px 0}
-  td.n,th.n{text-align:right;font-family:'IBM Plex Mono',monospace}
-  .cert{border:1px solid var(--line);border-radius:8px;padding:16px}
-  .badge{background:var(--paper);border-radius:6px;padding:9px 12px;display:flex;
-    justify-content:space-between;align-items:center;margin-top:12px;font-size:14px}
-  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-    text-align:center;min-height:320px}
-  .item{border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:12px}
-  .item-top{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
-  .filelbl{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:6px;
-    padding:6px 10px;font-size:12px;cursor:pointer}
-  .filelbl input{display:none}
-  .thumb{width:38px;height:38px;object-fit:cover;border-radius:4px;border:1px solid var(--line);margin-left:10px;vertical-align:middle}
-  @media print{.noprint{display:none!important} body{background:#fff}}
+:root{
+  --paper:#EFE7D6; --paper2:#FBF8F0; --ink:#26241F; --ink-soft:#5B584E;
+  --petrol:#1E4640; --petrol2:#2C5C54; --rust:#B5502E; --ochre:#C99A2E;
+  --sage:#6B8F71; --line:rgba(38,36,31,.16); --line2:rgba(38,36,31,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
+.serif{font-family:'Fraunces',Georgia,serif}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* ---------- cabecera ---------- */
+header{background:var(--paper)}
+.head-in{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 0}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:6px;background:var(--petrol);color:var(--ochre);
+  display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto}
+.brand h1{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;margin:0;line-height:1}
+.brand p{margin:3px 0 0;font-size:11.5px;color:var(--ink-soft)}
+.head-right{display:flex;align-items:center;gap:10px}
+.bell{position:relative;border:1px solid var(--line);background:var(--paper2);border-radius:6px;
+  width:34px;height:34px;cursor:pointer;font-size:15px;flex:0 0 auto;color:var(--ink)}
+.bell b{position:absolute;top:-6px;right:-6px;background:var(--rust);color:#fff;border-radius:999px;
+  font-size:10px;padding:1px 5px;font-weight:500;line-height:1.4}
+.acct{display:flex;align-items:center;gap:8px}
+.avatar{width:32px;height:32px;border-radius:999px;background:var(--petrol);color:var(--paper2);
+  display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;flex:0 0 auto}
+.acct select{width:auto;max-width:230px;font-size:13px;padding:7px 9px}
+
+/* ---------- pestañas ---------- */
+.tabs-bar{border-bottom:1px solid var(--line);background:var(--paper)}
+.tabs{display:flex;gap:2px;overflow-x:auto}
+.tab{border:0;background:transparent;padding:11px 14px;font:inherit;font-size:14px;color:var(--ink-soft);
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab.on{color:var(--ink);border-bottom-color:var(--petrol);font-weight:500}
+.tab:hover{color:var(--ink)}
+.tab:focus-visible{outline:2px solid var(--petrol);outline-offset:-4px}
+
+main{padding:26px 0 50px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.cols{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.col-main{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.col-side{width:300px;flex:0 0 auto;display:flex;flex-direction:column;gap:18px}
+@media(max-width:820px){.col-side{width:100%}}
+
+/* ---------- superficies ---------- */
+.card{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:20px}
+.card.flat{background:transparent;border-color:var(--line2)}
+h2.sec{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;margin:0;text-wrap:balance}
+h3.sec{font-family:'Fraunces',Georgia,serif;font-size:15px;font-weight:600;margin:0}
+.display{font-family:'Fraunces',Georgia,serif;font-size:27px;font-weight:600;margin:0;line-height:1.15;text-wrap:balance}
+@media(max-width:560px){.display{font-size:23px}}
+.muted{color:var(--ink-soft)}
+.small{font-size:13px}
+.xs{font-size:12px}
+.lede{max-width:62ch;margin:6px 0 0;color:var(--ink-soft)}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.cap{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 10px}
+.headrow{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap}
+.linkish{border:0;background:transparent;color:var(--petrol);font:inherit;font-size:13px;cursor:pointer;padding:0;text-decoration:underline}
+
+/* ---------- controles ---------- */
+button.primary{background:var(--petrol);color:var(--paper2);border:0;border-radius:6px;
+  padding:10px 18px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+button.primary:hover{background:var(--petrol2)}
+button.primary.lg{padding:13px 22px;font-size:15px}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:6px;
+  padding:8px 13px;font:inherit;font-size:13px;cursor:pointer}
+button.ghost:hover{background:var(--paper)}
+button:focus-visible,select:focus-visible{outline:2px solid var(--petrol);outline-offset:2px}
+input,select{border:1px solid var(--line);background:var(--paper2);border-radius:6px;
+  padding:9px 10px;font:inherit;font-size:14px;width:100%;color:var(--ink)}
+input:focus,select:focus{outline:2px solid var(--petrol);outline-offset:1px}
+label.f{display:flex;flex-direction:column;gap:5px}
+label.f>span{font-size:12px;color:var(--ink-soft)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* ---------- píldoras de estado ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11.5px;white-space:nowrap}
+.pill.ok{background:rgba(107,143,113,.18);color:#37543d}
+.pill.act{background:rgba(201,154,46,.20);color:#6f5310}
+.pill.neu{background:var(--line2);color:var(--ink-soft)}
+.flash{display:flex;gap:10px;align-items:center;border:1px solid var(--sage);border-left-width:3px;
+  border-radius:8px;padding:12px 15px;background:var(--paper2);font-size:13.5px}
+
+/* ---------- solicitud activa ---------- */
+.active{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  border:1px solid var(--petrol);border-radius:10px;padding:18px 20px;background:var(--paper2)}
+@media(max-width:640px){.active{grid-template-columns:1fr}}
+.active .t{font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:600;margin:4px 0 2px}
+.cta{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  border:1px solid var(--line);border-radius:10px;padding:20px;background:var(--paper2)}
+
+/* ---------- inicio residente ---------- */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;
+  background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:18px 16px;
+  font:inherit;color:var(--ink);cursor:pointer;min-height:116px}
+.tile:hover{border-color:var(--petrol);background:#fff}
+.tile .ic{font-size:26px;line-height:1}
+.tile .t{font-weight:500;font-size:15px}
+.tile .s{font-size:12px;color:var(--ink-soft);margin-top:auto}
+.trust{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:11px 14px;font-size:13px}
+
+/* ---------- listas ---------- */
+.list{display:flex;flex-direction:column;gap:0}
+.li{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;
+  padding:13px 0;border-top:1px solid var(--line2);font-size:14px;text-align:left;
+  background:transparent;border-left:0;border-right:0;border-bottom:0;font-family:inherit;color:var(--ink);width:100%;cursor:pointer}
+.li:first-child{border-top:0}
+.li:hover{background:var(--paper)}
+.li .s{font-size:12px;color:var(--ink-soft);margin-top:2px}
+.li .amt{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+@media(max-width:560px){.li{grid-template-columns:1fr auto}.li .amt{grid-column:2}}
+
+/* ---------- progreso ---------- */
+.prog{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px}
+.prog .p{display:flex;align-items:center;gap:7px;color:var(--ink-soft)}
+.prog .p.on{color:var(--ink);font-weight:500}
+.prog .n{width:21px;height:21px;border-radius:999px;border:1px solid var(--line);
+  display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex:0 0 auto}
+.prog .p.on .n{background:var(--petrol);border-color:var(--petrol);color:var(--paper2)}
+.prog .p.done .n{background:var(--sage);border-color:var(--sage);color:#fff}
+.prog .sep{width:14px;height:1px;background:var(--line)}
+
+/* ---------- fotos ---------- */
+.photos{display:flex;gap:10px;flex-wrap:wrap}
+.ph{width:88px;height:88px;border-radius:8px;border:1px dashed var(--line);background:var(--paper);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-size:11px;color:var(--ink-soft);cursor:pointer}
+.ph.filled{border-style:solid;border-color:var(--line);background:var(--petrol);color:var(--paper2);font-size:22px}
+
+/* ---------- ofertas ---------- */
+.sorts{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;
+  font:inherit;font-size:13px;cursor:pointer;color:var(--ink-soft);white-space:nowrap}
+.chip.on{background:var(--petrol);border-color:var(--petrol);color:var(--paper2)}
+.offer{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;
+  background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.offer.best{border-color:var(--petrol);border-width:2px;padding:15px 17px}
+.offer .name{font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;margin:0}
+.offer .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink-soft);margin-top:5px}
+.offer .quote{font-size:12.5px;color:var(--ink-soft);margin:9px 0 0;max-width:56ch;font-style:italic}
+.offer .price{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;
+  font-size:22px;text-align:right;white-space:nowrap}
+.offer .right{display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+@media(max-width:600px){.offer{grid-template-columns:1fr}.offer .right{align-items:stretch}.offer .price{text-align:left}}
+.tag{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;
+  background:var(--petrol);color:var(--paper2)}
+.tag.alt{background:var(--sage);color:#fff}
+.verif{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--paper);
+  border-radius:999px;padding:3px 9px;font-size:11px;color:var(--ink-soft)}
+.verif b{font-weight:500;color:var(--ink)}
+.ref-line{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;
+  background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:12px 15px;font-size:13px}
+.strike{text-decoration:line-through;color:var(--ink-soft)}
+
+/* ---------- resumen / portería ---------- */
+.row{display:flex;justify-content:space-between;gap:14px;font-size:14px;padding:4px 0}
+.row b{font-weight:600}
+.gate{border:1px solid var(--line);border-radius:8px;padding:15px;background:var(--paper)}
+.gate dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13px}
+.gate dt{color:var(--ink-soft)}
+.gate dd{margin:0;font-weight:500}
+
+/* ---------- seguimiento ---------- */
+.steps-wrap{overflow-x:auto}
+.steps{display:flex;min-width:430px}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:104px}
+.dot{width:32px;height:32px;border-radius:999px;border:1px solid var(--line);background:var(--paper);
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.dot.on{background:var(--petrol);border-color:var(--petrol);color:var(--paper2)}
+.dot.now{background:var(--ochre);border-color:var(--ochre);color:var(--ink)}
+.step span{font-size:12px;text-align:center;line-height:1.25;max-width:104px;color:var(--ink-soft)}
+.step.on span{color:var(--ink)}
+.bar{flex:1;height:1px;background:var(--line);margin:16px 2px 0}
+.bar.on{background:var(--petrol)}
+.tl{display:flex;flex-direction:column}
+.tl-item{display:grid;grid-template-columns:76px 1fr;gap:14px;padding:9px 0;border-top:1px solid var(--line2);font-size:14px}
+.tl-item:first-child{border-top:0}
+.tl-item time{color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:12px;padding-top:2px}
+
+/* ---------- certificado ---------- */
+.ticket{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:26px 22px 22px;
+  background-image:radial-gradient(circle at center,var(--paper) 5.2px,transparent 5.6px);
+  background-size:18px 14px;background-repeat:repeat-x;background-position:top left}
+.cert-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.cert-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px;margin:0}
+.cert-grid dt{color:var(--ink-soft)}
+.cert-grid dd{margin:0}
+.mat{display:flex;flex-direction:column;gap:7px}
+.mat-row{display:grid;grid-template-columns:118px 1fr 56px;gap:10px;align-items:center;font-size:13px}
+.mat-bar{height:9px;border-radius:3px;background:var(--line2);overflow:hidden}
+.mat-bar i{display:block;height:100%;border-radius:3px;background:var(--sage)}
+.mat-row.final .mat-bar i{background:var(--ink-soft)}
+.mat-row .n{text-align:right;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.qr{width:104px;height:104px;flex:0 0 auto}
+.badge{background:var(--paper);border:1px solid var(--line2);border-radius:8px;padding:11px 14px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--paper2);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .k{font-size:12px;color:var(--ink-soft);margin:0 0 6px}
+.kpi .v{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-size:23px;line-height:1.1}
+.kpi .d{font-size:11px;color:var(--ink-soft);margin-top:4px}
+.kpi .d.up{color:var(--sage)}
+.kpi .d.down{color:var(--rust)}
+
+/* ---------- embudo ---------- */
+.funnel{display:flex;flex-direction:column;gap:11px}
+.fn{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+@media(max-width:560px){.fn{grid-template-columns:1fr}}
+.fn .lab{font-size:13px}
+.fn .lab i{display:block;font-style:normal;font-size:11px;color:var(--ink-soft)}
+.fn .track{position:relative;height:30px;display:flex;align-items:center}
+.fn .fill{height:30px;border-radius:0 4px 4px 0;background:var(--petrol);min-width:3px}
+.fn .n{position:absolute;left:11px;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;
+  font-size:13px;color:var(--paper2)}
+.fn .n.out{position:static;margin-left:9px;color:var(--ink)}
+
+/* ---------- barras ---------- */
+.vbars{display:flex;align-items:flex-end;gap:5px;height:130px}
+.vb{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.vb i{display:block;background:var(--petrol);border-radius:4px 4px 0 0;min-height:3px}
+.vb.peak i{background:var(--ochre)}
+.vb.sage i{background:var(--sage)}
+.vbx{display:flex;gap:5px;margin-top:6px}
+.vbx span{flex:1;text-align:center;font-size:10px;color:var(--ink-soft);
+  font-family:'IBM Plex Mono',monospace;overflow:hidden}
+.vbv{display:flex;gap:5px;margin-bottom:5px}
+.vbv span{flex:1;text-align:center;font-size:10.5px;color:var(--ink-soft);
+  font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.hbars{display:flex;flex-direction:column;gap:9px}
+.hb{display:grid;grid-template-columns:104px 1fr 62px;gap:11px;align-items:center;font-size:13px}
+.hb .track{height:16px;border-radius:3px;background:var(--line2);overflow:hidden}
+.hb .track i{display:block;height:100%;border-radius:3px;background:var(--petrol)}
+
+/* ---------- alertas ---------- */
+.alert{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--rust);border-left-width:3px;
+  border-radius:8px;padding:12px 15px;background:var(--paper2);font-size:13px}
+.alert .ic{font-size:15px;line-height:1.3}
+.alert b{display:block;margin-bottom:2px}
+
+/* ---------- tabla ---------- */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:400;color:var(--ink-soft);padding:0 10px 7px 0;font-size:12px;
+  border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line2);vertical-align:middle}
+td.n,th.n{text-align:right;font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+.tbl-wrap{overflow-x:auto}
+.minibar{height:7px;border-radius:2px;background:var(--line2);min-width:60px;overflow:hidden;display:block}
+.minibar i{display:block;height:100%;background:var(--petrol);border-radius:2px}
+
+/* ---------- solicitudes del gestor ---------- */
+.req{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+  border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:var(--paper2)}
+.req .t{font-weight:500}
+.req .m{font-size:12px;color:var(--ink-soft);margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:600px){.req{grid-template-columns:1fr}}
+.warnpill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;
+  font-size:11px;background:rgba(181,80,46,.12);color:var(--rust)}
+
+/* ---------- cascada de precios ---------- */
+.wf{display:flex;gap:14px;height:250px;align-items:flex-end;min-width:620px}
+.wf-wrap{overflow-x:auto;padding-top:10px}
+.wf-col{flex:1;position:relative;height:100%}
+.wf-bar{position:absolute;left:0;right:0;border-radius:3px}
+.wf-bar.base{background:var(--petrol)}
+.wf-bar.down{background:var(--sage)}
+.wf-bar.up{background:var(--rust)}
+.wf-val{position:absolute;left:0;right:0;text-align:center;font-family:'IBM Plex Mono',monospace;
+  font-variant-numeric:tabular-nums;font-size:12px;transform:translateY(-20px)}
+.wf-link{position:absolute;right:-14px;width:14px;border-top:1px dashed var(--line);height:0}
+.wfx{display:flex;gap:14px;margin-top:9px;min-width:620px}
+.wfx span{flex:1;text-align:center;font-size:11px;color:var(--ink-soft);line-height:1.3}
+.wf-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-top:14px}
+.wf-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* ---------- pie ---------- */
+footer{border-top:1px solid var(--line);background:var(--paper)}
+.foot-in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:24px 0 34px;
+  font-size:12px;color:var(--ink-soft)}
+.foot-in nav{display:flex;gap:18px;flex-wrap:wrap}
+.foot-in a{color:var(--ink-soft);text-decoration:none}
+.foot-in a:hover{color:var(--ink);text-decoration:underline}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -110,326 +315,951 @@
       <div class="logo">♻</div>
       <div>
         <h1>CoreCycle</h1>
-        <p>Prototipo V2 — recolección de voluminosos en propiedad horizontal</p>
+        <p>Retiro de voluminosos · Bogotá</p>
       </div>
     </div>
-    <div class="toggle noprint">
-      <button id="r-admin">Administrador</button>
-      <button id="r-ops">Operativo CoreCycle</button>
+    <div class="head-right">
+      <button class="bell" aria-label="Notificaciones">🔔<b>2</b></button>
+      <span class="acct">
+        <span class="avatar" id="avatar">MT</span>
+        <select id="acct" aria-label="Cuenta">
+          <option value="res">Marcela Torres — Residente</option>
+          <option value="ges">EcoRetiro Bogotá — Gestor</option>
+          <option value="plat">CoreCycle — Administración</option>
+        </select>
+      </span>
     </div>
   </div>
 </header>
 
-<main class="wrap">
-  <div class="cols">
-    <div class="side noprint">
-      <div id="pointsBox"></div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <h2 class="sec">Lotes</h2>
-          <button class="primary" id="newLot" style="padding:6px 12px;font-size:13px">+ Nuevo lote</button>
-        </div>
-        <div id="lotList"></div>
-      </div>
-    </div>
-    <div class="main-col" id="detail"></div>
+<div class="tabs-bar">
+  <div class="wrap"><div class="tabs" id="tabs"></div></div>
+</div>
+
+<main class="wrap" id="app"></main>
+
+<footer>
+  <div class="wrap foot-in">
+    <nav>
+      <a href="#">Cómo funciona</a><a href="#">Ser gestor aliado</a><a href="#">Ayuda</a>
+      <a href="#">Términos</a><a href="#">Política de datos</a>
+    </nav>
+    <span>CoreCycle SAS · NIT 901.663.104-2 · Bogotá D.C.</span>
   </div>
-</main>
+</footer>
 
 <script>
-const ITEM_TYPES={
-  sofa:{label:'Sofá / sillón',servicio:40000,deposito:70000},
-  colchon:{label:'Colchón',servicio:20000,deposito:15000},
-  mesa:{label:'Mesa / silla suelta',servicio:25000,deposito:25000},
-  closet:{label:'Closet / mueble grande',servicio:35000,deposito:45000},
-  electro:{label:'Electrodoméstico',servicio:30000,deposito:35000},
-  otro:{label:'Otro objeto voluminoso',servicio:20000,deposito:20000}
+/* ===================== catálogo ===================== */
+const TIPOS = {
+  sofa:    {label:'Sofá o sillón',        ic:'🛋️', ref:180000, hint:'Incluye sofá cama y sillones'},
+  colchon: {label:'Colchón',              ic:'🛏️', ref:70000,  hint:'Sencillo, doble o queen'},
+  mesa:    {label:'Mesa o sillas',        ic:'🪑', ref:95000,  hint:'Comedor, escritorio, sillas sueltas'},
+  closet:  {label:'Clóset o mueble alto', ic:'🗄️', ref:150000, hint:'Bibliotecas, closets, armarios'},
+  electro: {label:'Electrodoméstico',     ic:'🧊', ref:120000, hint:'Nevera, lavadora, estufa'},
+  otro:    {label:'Otro voluminoso',      ic:'📦', ref:110000, hint:'Cualquier objeto grande'}
 };
-const MATERIALS={
-  madera:{label:'Madera',rate:700},
-  metal:{label:'Metal / acero',rate:1200},
-  tapiceria:{label:'Tapicería / textil',rate:250},
-  espuma:{label:'Espuma',rate:50},
-  otro:{label:'Otro material',rate:300}
+
+const GESTORES = [
+  {id:'eco',  nombre:'EcoRetiro Bogotá',     f:0.676, cal:4.8, res:127, ventana:'Mañana 8–11 a.m.', horas:18, aprov:82,
+   ver:['ARL','Póliza','RUT'], quote:'«Llegaron dentro de la ventana y dejaron el hall limpio.» — Marcela T., Suba'},
+  {id:'verde',nombre:'Gestión Verde Norte',  f:0.728, cal:4.9, res:203, ventana:'Hoy 2–5 p.m.',     horas:5,  aprov:91,
+   ver:['ARL','Póliza','RUT'], quote:'«Bajaron un comedor por escaleras sin rayar una pared.» — Andrés P., Usaquén'},
+  {id:'norte',nombre:'Reciclajes del Norte', f:0.806, cal:4.5, res:61,  ventana:'Jueves 9–12 m.',   horas:62, aprov:64,
+   ver:['ARL','Póliza','RUT'], quote:'«Cumplieron, aunque avisaron veinte minutos tarde.» — Liliana R., Suba'}
+];
+
+/* Historial de la cuenta residente */
+const MIS = [
+  {id:'CC-2026-04871', obj:'Sofá de 3 puestos',  tipo:'sofa',    fecha:'14 sep 2026', gestor:'EcoRetiro Bogotá',
+   precio:122000, ref:180000, estado:'curso',  kg:68, rell:11},
+  {id:'CC-2026-04120', obj:'Colchón doble',      tipo:'colchon', fecha:'14 jun 2026', gestor:'Gestión Verde Norte',
+   precio:47000,  ref:70000,  estado:'cerrado', kg:24, rell:4},
+  {id:'CC-2026-03344', obj:'Mesa de centro',     tipo:'mesa',    fecha:'02 mar 2026', gestor:'EcoRetiro Bogotá',
+   precio:38000,  ref:56000,  estado:'cerrado', kg:19, rell:2},
+  {id:'CC-2025-09877', obj:'Silla de escritorio',tipo:'otro',    fecha:'18 nov 2025', gestor:'Aprovecha Usaquén',
+   precio:32000,  ref:47000,  estado:'cerrado', kg:11, rell:2},
+  {id:'CC-2025-08210', obj:'Clóset de 2 cuerpos',tipo:'closet',  fecha:'03 sep 2025', gestor:'EcoRetiro Bogotá',
+   precio:101000, ref:150000, estado:'cerrado', kg:52, rell:8}
+];
+
+const DIAS = [18,24,31,27,19,12,9,22,35,41,29,24,16,11];
+const MESES = ['Abr','May','Jun','Jul','Ago','Sep'];
+const TX_MES = [88,141,196,254,331,395];
+const GES_MES = [6,9,13,16,19,23];
+const TICKET = 122000, KG_RETIRO = 68, KG_RELLENO = 11, KG_DESV = KG_RETIRO - KG_RELLENO;
+
+const RANKING = [
+  {n:'Gestión Verde Norte',  tx:64, conv:41, cal:4.9, com:1171000},
+  {n:'EcoRetiro Bogotá',     tx:52, conv:32, cal:4.8, com:951000},
+  {n:'Aprovecha Usaquén',    tx:47, conv:35, cal:4.7, com:860000},
+  {n:'Reciclajes del Norte', tx:38, conv:24, cal:4.5, com:695000},
+  {n:'Ruta Limpia Suba',     tx:31, conv:28, cal:4.6, com:567000}
+];
+const ZONAS = [{z:'Suba',p:38},{z:'Usaquén',p:29},{z:'Chapinero',p:18},{z:'Engativá',p:15}];
+
+const SOLICITUDES = [
+  {t:'Sofá de 3 puestos',    c:'Conjunto Alameda del Bosque', z:'Suba',    piso:5, asc:'No cabe', hace:'hace 12 min', of:1},
+  {t:'Colchón doble',        c:'Torres de Aranjuez',          z:'Bosa',    piso:8, asc:'Sí',      hace:'hace 40 min', of:3},
+  {t:'Nevera',               c:'Portal de Alcalá',            z:'Usaquén', piso:2, asc:'Sí',      hace:'hace 1 h',    of:2},
+  {t:'Comedor de 6 puestos', c:'Reserva de Niza',             z:'Suba',    piso:3, asc:'No cabe', hace:'hace 2 h',    of:0}
+];
+
+const RETIROS_GESTOR = [
+  {f:'12 sep', o:'Sofá de 3 puestos',   c:'Alameda del Bosque', p:122000, cal:5.0},
+  {f:'11 sep', o:'Colchón doble',       c:'Reserva de Niza',    p:47000,  cal:4.0},
+  {f:'10 sep', o:'Clóset de 2 cuerpos', c:'Portal de Alcalá',   p:101000, cal:5.0},
+  {f:'09 sep', o:'Nevera',              c:'Torres de Aranjuez', p:81000,  cal:4.5},
+  {f:'08 sep', o:'Comedor de 6',        c:'Alameda del Bosque', p:64000,  cal:5.0}
+];
+
+const MATERIALES = [
+  {m:'Madera',            kg:28, d:'Reutilizada — taller de restauración', aliado:'Maderas Renacer'},
+  {m:'Espuma',            kg:14, d:'Reciclada — relleno industrial',       aliado:'Espumados del Sur'},
+  {m:'Metal',             kg:9,  d:'Reciclado — chatarrería habilitada',   aliado:'Metales Usaquén'},
+  {m:'Textil',            kg:6,  d:'Reciclado — trapo industrial',         aliado:'Fibra Textil SAS'},
+  {m:'Disposición final', kg:11, d:'Relleno sanitario Doña Juana',         aliado:'—', final:true}
+];
+
+const REF = 180000;
+const WF = [
+  {k:'ref',   lab:'Referencia informal',         sub:'Una sola llamada, sin competencia',        tipo:'base'},
+  {k:'comp',  lab:'Competencia entre gestores',  sub:'3 ofertas comparables',                    tipo:'down', pct:-22},
+  {k:'aprov', lab:'Aprovechamiento del material',sub:'El gestor lo traslada para ganar la puja', tipo:'down', pct:-12},
+  {k:'ruta',  lab:'Densificación de ruta',       sub:'Varios retiros del mismo corredor',        tipo:'down', pct:-8},
+  {k:'com',   lab:'Comisión CoreCycle 15%',      sub:'Al gestor, con traslado parcial',          tipo:'up',   pct:7},
+  {k:'fin',   lab:'Precio promedio del marketplace', sub:'Oferta ganadora',                      tipo:'base'}
+];
+const FINAL = (() => { let v = REF; WF.forEach(s => { if (s.pct) v *= (1 + s.pct/100); }); return v; })();
+
+/* ===================== navegación ===================== */
+const CUENTAS = {
+  res:  {ini:'MT', secs:[['inicio','Inicio'],['solicitar','Solicitar retiro'],['retiros','Mis retiros']]},
+  ges:  {ini:'ER', secs:[['tablero','Tablero'],['solicitudes','Solicitudes'],['historial','Historial']]},
+  plat: {ini:'CC', secs:[['consolidado','Consolidado'],['impacto','Impacto'],['precios','Precios']]}
 };
-const CATALOGO=[
-  {id:'focos',label:'Focos y bombillos para zonas comunes',costo:50},
-  {id:'aseo',label:'Insumos de aseo (bolsas, limpieza)',costo:80},
-  {id:'jardin',label:'Visita adicional de jardinería',costo:150},
-  {id:'mant',label:'Mantenimiento menor (pintura, cerrajería)',costo:300}
-];
-const STEPS=[
-  {key:'cotizado',label:'Cotización en firme',icon:'📄'},
-  {key:'agendado',label:'Ruta agendada',icon:'📅'},
-  {key:'recogido',label:'Recogido',icon:'🚚'},
-  {key:'cerrado',label:'Clasificado y certificado',icon:'🏅'}
-];
-const ORDER=STEPS.map(s=>s.key);
+const S = {acct:'res', sec:'inicio', paso:1, tipo:'sofa', orden:'precio', gestor:'eco', abierto:null, flash:null};
 
-let uid=1; const nid=()=>uid++;
-const S={role:'admin',lots:[],sel:null,form:null,points:0,redemptions:[]};
+/* ===================== utilidades ===================== */
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => '$' + Math.round(n).toLocaleString('es-CO');
+const r1000 = n => Math.round(n/1000)*1000;
+const miles = n => Math.round(n).toLocaleString('es-CO');
+const precio = (g, tipo) => r1000(TIPOS[tipo].ref * g.f);
+const gestorById = id => GESTORES.find(g => g.id === id);
+const sum = a => a.reduce((x,y) => x+y, 0);
+const activo = () => MIS.find(m => m.estado === 'curso');
+const cerrados = () => MIS.filter(m => m.estado === 'cerrado');
 
-const money=n=>n.toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});
-const fdate=d=>d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const stepLabel=k=>(STEPS.find(s=>s.key===k)||{}).label||k;
-
-function quote(items){
-  let servicio=0,deposito=0;
-  items.forEach(it=>{const d=ITEM_TYPES[it.tipo];servicio+=d.servicio*it.cantidad;deposito+=d.deposito*it.cantidad;});
-  const now=new Date();
-  const desde=new Date(now); desde.setDate(now.getDate()+1);
-  const hasta=new Date(now); hasta.setDate(now.getDate()+2);
-  return {servicio,deposito,total:servicio+deposito,desde,hasta};
+/* Única fuente del desglose de material: la tabla, el certificado y el
+   acumulado de impacto leen de aquí, así los totales siempre cuadran. */
+function matsDe(m){
+  const factor = m.kg / KG_RETIRO;
+  const mats = MATERIALES.map(x => ({...x, kg: Math.max(1, Math.round(x.kg * factor))}));
+  const total = sum(mats.map(x => x.kg));
+  const rell  = mats.find(x => x.final).kg;
+  return {mats, total, rell, desv: total - rell};
 }
 
-/* ---------- render ---------- */
-function render(){
-  document.getElementById('r-admin').className=S.role==='admin'?'on':'';
-  document.getElementById('r-ops').className=S.role==='ops'?'on':'';
-  document.getElementById('newLot').style.display=S.role==='admin'?'':'none';
-  renderPoints(); renderList(); renderDetail();
+function ofertasOrdenadas(){
+  const arr = GESTORES.slice();
+  if (S.orden === 'precio')  arr.sort((a,b) => a.f - b.f);
+  if (S.orden === 'rapidez') arr.sort((a,b) => a.horas - b.horas);
+  if (S.orden === 'calif')   arr.sort((a,b) => b.cal - a.cal);
+  return arr;
 }
-
-function renderPoints(){
-  const box=document.getElementById('pointsBox');
-  if(S.role!=='admin'){box.innerHTML='';return;}
-  box.innerHTML=`<div class="card">
-    <h2 class="sec">🪙 Puntos CoreCycle</h2>
-    <div class="pts">${S.points} <span class="small muted">pts</span></div>
-    ${CATALOGO.map(c=>`<div class="catrow"><span>${esc(c.label)}</span>
-      <button class="ghost" data-redeem="${c.id}" ${S.points<c.costo?'disabled':''}>${c.costo} pts</button></div>`).join('')}
-    ${S.redemptions.length?`<div class="hr"></div><p class="xs muted" style="margin:0 0 4px">Canjes recientes</p>
-      ${S.redemptions.slice(0,3).map(r=>`<div class="xs muted">${fdate(r.fecha)} · ${esc(r.label)}</div>`).join('')}`:''}
-  </div>`;
-  box.querySelectorAll('[data-redeem]').forEach(b=>b.onclick=()=>{
-    const it=CATALOGO.find(c=>c.id===b.dataset.redeem);
-    if(S.points<it.costo)return;
-    S.points-=it.costo; S.redemptions.unshift({...it,fecha:new Date()}); render();
+function wfSerie(){
+  let v = REF; const out = [];
+  WF.forEach(s => {
+    if (s.tipo === 'base') { out.push({...s, desde:0, hasta:v, delta:null}); return; }
+    const nv = v * (1 + s.pct/100);
+    out.push({...s, desde:Math.min(v,nv), hasta:Math.max(v,nv), delta:nv - v});
+    v = nv;
   });
+  return out;
 }
-
-function renderList(){
-  const el=document.getElementById('lotList');
-  if(!S.lots.length){
-    el.innerHTML=`<p class="small muted" style="margin:0">${S.role==='admin'
-      ?'Aún no hay lotes registrados. Crea el primero para ver la cotización en firme.'
-      :'No hay lotes pendientes de gestión operativa.'}</p>`;
-    return;
-  }
-  el.innerHTML=S.lots.map(l=>`<button class="lot ${l.id===S.sel?'on':''}" data-lot="${l.id}">
-    <div class="t">${esc(l.conjunto)}</div>
-    <div class="s">${stepLabel(l.status)} · ${fdate(l.createdAt)}</div></button>`).join('');
-  el.querySelectorAll('[data-lot]').forEach(b=>b.onclick=()=>{S.sel=+b.dataset.lot;S.form=null;render();});
-}
-
-function renderDetail(){
-  const el=document.getElementById('detail');
-  if(S.form){el.innerHTML=formHTML();bindForm();return;}
-  const lot=S.lots.find(l=>l.id===S.sel);
-  if(!lot){
-    el.innerHTML=`<div class="card empty">
-      <div style="font-size:28px">📦</div>
-      <p class="serif" style="font-size:18px;font-weight:600;margin:0">Selecciona o crea un lote</p>
-      <p class="small muted" style="max-width:320px;margin:0">Cada lote sigue el mismo recorrido: cotización en firme, ruta, recogida, clasificación y certificado de trazabilidad.</p>
-    </div>`; return;
-  }
-  const i=ORDER.indexOf(lot.status);
-  el.innerHTML=`
-    <div class="card">
-      <h2 class="serif" style="font-size:21px;font-weight:600;margin:0">${esc(lot.conjunto)}</h2>
-      <p class="small muted" style="margin:4px 0 0">
-        ${lot.contacto?'👤 '+esc(lot.contacto)+' &nbsp; ':''}
-        ${lot.direccion?'📍 '+esc(lot.direccion)+' &nbsp; ':''}
-        📅 Registrado ${fdate(lot.createdAt)}</p>
-      <div style="margin-top:14px">${lot.items.map(it=>`<span class="chip">
-        ${it.foto?`<img src="${it.foto}" alt="">`:''}${ITEM_TYPES[it.tipo].label} × ${it.cantidad}</span>`).join('')}</div>
-    </div>
-    <div class="card noprint"><div class="steps-wrap"><div class="steps">${
-      STEPS.map((s,k)=>{const done=k<=i,last=k===STEPS.length-1;
-        return `<div style="display:flex;align-items:flex-start;${last?'flex:0 0 auto':'flex:1 1 auto'}">
-          <div class="step ${done?'on':''}"><div class="dot ${done?'on':''}">${s.icon}</div><span>${s.label}</span></div>
-          ${last?'':`<div class="bar ${k<i?'on':''}"></div>`}</div>`;}).join('')
-    }</div></div></div>
-    ${ticketHTML(lot)}
-    ${actionsHTML(lot)}
-    ${lot.status==='cerrado'?certHTML(lot):''}`;
-  bindDetail(lot);
-}
-
-function ticketHTML(lot){
-  const q=lot.cotizacion;
-  return `<div class="ticket">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h3 class="sec">Cotización en firme</h3>
-      <span class="mono xs muted">#${String(lot.id).padStart(4,'0')}</span></div>
-    <div class="row"><span class="muted">Servicio de logística y transporte</span><span class="mono">${money(q.servicio)}</span></div>
-    <div class="row"><span class="muted">Depósito de materia prima recuperable (reembolsable)</span><span class="mono">${money(q.deposito)}</span></div>
-    <div class="hr"></div>
-    <div class="row"><b>Total a facturar</b><b class="mono">${money(q.total)}</b></div>
-    <p class="small muted" style="margin:12px 0 0">📅 Ventana de ruta: ${fdate(q.desde)} – ${fdate(q.hasta)}</p>
-    <p class="xs muted" style="margin:10px 0 0">El depósito se devuelve como Puntos CoreCycle según el valor real del material recuperado en planta — el desglose completo queda en el certificado de trazabilidad.</p>
-  </div>`;
-}
-
-function act(ic,title,text,btn){
-  return `<div class="card action"><div class="ic">${ic}</div><div>
-    <p class="small" style="margin:0;font-weight:500">${title}</p>
-    <p class="small muted" style="margin:2px 0 0">${text}</p>
-    ${btn?`<button class="primary" id="actBtn" style="margin-top:12px">${btn}</button>`:''}</div></div>`;
-}
-
-function actionsHTML(lot){
-  const q=lot.cotizacion, admin=S.role==='admin';
-  if(lot.status==='cotizado') return admin
-    ? act('📅','Confirmar y agendar','Confirma la cotización para reservar la ventana de ruta indicada.','Confirmar y agendar')
-    : act('📅','Pendiente de confirmación del administrador','El administrador aún no confirma esta cotización.');
-  if(lot.status==='agendado') return admin
-    ? act('🚚','Ruta agendada',`Ventana estimada: ${fdate(q.desde)} – ${fdate(q.hasta)}. Te avisaremos cuando el vehículo esté en camino.`)
-    : act('🚚','Ruta agendada',`Ventana: ${fdate(q.desde)} – ${fdate(q.hasta)}. Marca el lote cuando el vehículo recoja el material.`,'Marcar como recogido');
-  if(lot.status==='recogido') return admin
-    ? act('⚖️','Material en planta de clasificación','El equipo operativo está pesando y clasificando los materiales. El certificado y los puntos se generan automáticamente al terminar.')
-    : clasifHTML();
-  return '';
-}
-
-function clasifHTML(){
-  return `<div class="card">
-    <h3 class="sec">⚖️ Clasificación en planta</h3>
-    <p class="xs muted" style="margin:6px 0 14px">Registra manualmente el peso por tipo de material recuperado. El sistema calcula el valor, el reembolso y los puntos.</p>
-    <div class="grid3">${Object.entries(MATERIALS).map(([k,m])=>
-      `<label class="f"><span>${m.label} (kg)</span><input class="mono" type="number" min="0" step="0.5" value="0" data-kg="${k}"></label>`).join('')}</div>
-    <button class="primary" id="clasifBtn" style="margin-top:16px">🏅 Registrar clasificación y acreditar puntos</button>
-  </div>`;
-}
-
-function certHTML(lot){
-  const c=lot.clasificacion;
-  return `<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px" class="noprint">
-      <h3 class="sec">✅ Certificado de trazabilidad</h3>
-      <button class="ghost" id="printBtn">🖨 Imprimir / descargar</button></div>
-    <div class="cert">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-        <div><p class="serif" style="font-size:18px;font-weight:600;margin:0">${esc(lot.conjunto)}</p>
-        <p class="xs muted" style="margin:2px 0 0">Lote #${String(lot.id).padStart(4,'0')} · Clasificado el ${fdate(c.fecha)}</p></div>
-        <span style="font-size:20px">♻</span></div>
-      ${c.materiales.length?`<table><thead><tr><th>Material</th><th class="n">Kg</th><th class="n">Valor</th></tr></thead>
-        <tbody>${c.materiales.map(m=>`<tr><td>${m.label}</td><td class="n">${m.kg}</td><td class="n">${money(m.valor)}</td></tr>`).join('')}</tbody></table>`
-        :`<p class="small muted">No se recuperó material con valor en este lote.</p>`}
-      <div class="hr"></div>
-      <div class="row"><span class="muted">Total material recuperado</span><span class="mono">${c.kgTotal} kg</span></div>
-      <div class="row"><span class="muted">Valor recuperado</span><span class="mono">${money(c.valorRecuperado)}</span></div>
-      <div class="row"><b>Reembolso acreditado</b><b class="mono">${money(c.reembolso)}</b></div>
-      <div class="row"><span class="muted">Margen operativo de CoreCycle</span><span class="mono">${money(c.margen)}</span></div>
-      <div class="badge"><span>🪙 Puntos CoreCycle acreditados</span><b class="mono">${c.puntos} pts</b></div>
-      <p class="xs muted" style="margin:12px 0 0">${c.kgTotal} kg de material fueron desviados de la disposición informal y reincorporados a cadenas de reciclaje o reúso. Este documento respalda la gestión del administrador ante el consejo y la autoridad ambiental.</p>
-    </div></div>`;
-}
-
-function bindDetail(lot){
-  const b=document.getElementById('actBtn');
-  if(b) b.onclick=()=>{
-    if(lot.status==='cotizado') lot.status='agendado';
-    else if(lot.status==='agendado') lot.status='recogido';
-    render();
+function qrSVG(size){
+  const N = 21, c = size / N;
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  let r = '';
+  const finder = (ox, oy) => {
+    r += `<rect x="${ox*c}" y="${oy*c}" width="${7*c}" height="${7*c}" fill="var(--ink)"/>`;
+    r += `<rect x="${(ox+1)*c}" y="${(oy+1)*c}" width="${5*c}" height="${5*c}" fill="var(--paper2)"/>`;
+    r += `<rect x="${(ox+2)*c}" y="${(oy+2)*c}" width="${3*c}" height="${3*c}" fill="var(--ink)"/>`;
   };
-  const cb=document.getElementById('clasifBtn');
-  if(cb) cb.onclick=()=>{
-    const mats=[];
-    document.querySelectorAll('[data-kg]').forEach(inp=>{
-      const kg=Math.max(0,Number(inp.value)||0); if(!kg)return;
-      const def=MATERIALS[inp.dataset.kg];
-      mats.push({label:def.label,kg,valor:kg*def.rate});
-    });
-    const valorRecuperado=mats.reduce((s,m)=>s+m.valor,0);
-    const dep=lot.cotizacion.deposito;
-    const reembolso=Math.min(valorRecuperado,dep);
-    lot.clasificacion={materiales:mats,valorRecuperado,reembolso,margen:dep-reembolso,
-      puntos:Math.floor(reembolso/1000),kgTotal:mats.reduce((s,m)=>s+m.kg,0),fecha:new Date()};
-    S.points+=lot.clasificacion.puntos;
-    lot.status='cerrado'; render();
-  };
-  const pb=document.getElementById('printBtn');
-  if(pb) pb.onclick=()=>window.print();
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    if ((x < 8 && y < 8) || (x > N-9 && y < 8) || (x < 8 && y > N-9)) continue;
+    if (rnd() > 0.52) r += `<rect x="${x*c}" y="${y*c}" width="${c}" height="${c}" fill="var(--ink)"/>`;
+  }
+  finder(0,0); finder(N-7,0); finder(0,N-7);
+  return `<svg class="qr" viewBox="0 0 ${size} ${size}" role="img" aria-label="Código QR de verificación">
+    <rect width="${size}" height="${size}" fill="var(--paper2)"/>${r}</svg>`;
+}
+function prog(paso){
+  const ps = ['Describe','Compara','Confirma'];
+  return `<div class="prog">${ps.map((p,i) => {
+    const st = i+1 < paso ? 'done' : i+1 === paso ? 'on' : '';
+    return `<span class="p ${st}"><span class="n">${i+1 < paso ? '✓' : i+1}</span>${p}</span>` + (i < 2 ? '<span class="sep"></span>' : '');
+  }).join('')}</div>`;
+}
+const verifChips = g => g.ver.map(v => `<span class="verif">✓ <b>${v}</b></span>`).join(' ');
+function vbars(vals, labs, opt = {}){
+  const max = Math.max(...vals);
+  return `${opt.vals ? `<div class="vbv">${vals.map(v => `<span>${opt.fmt ? opt.fmt(v) : v}</span>`).join('')}</div>` : ''}
+    <div class="vbars">${vals.map((v,i) => `<span class="vb ${opt.cls||''} ${v===max&&opt.peak?'peak':''}"
+      title="${labs[i]}: ${opt.fmt ? opt.fmt(v) : v}"><i style="height:${(v/max*100).toFixed(1)}%"></i></span>`).join('')}</div>
+    <div class="vbx">${labs.map(l => `<span>${l}</span>`).join('')}</div>`;
+}
+const pasosSeg = [
+  {ic:'✓',  lab:'Confirmado',  st:'on'},
+  {ic:'🚚', lab:'En camino',   st:'now'},
+  {ic:'📦', lab:'Recogido',    st:''},
+  {ic:'🏅', lab:'Certificado', st:''}
+];
+function stepsHTML(){
+  return `<div class="steps-wrap"><div class="steps">
+    ${pasosSeg.map((p,i) => `
+      <div class="step ${p.st?'on':''}"><span class="dot ${p.st}">${p.ic}</span><span>${p.lab}</span></div>
+      ${i < pasosSeg.length-1 ? `<div class="bar ${i===0?'on':''}"></div>` : ''}`).join('')}
+  </div></div>`;
 }
 
-/* ---------- formulario ---------- */
-function newForm(){return {conjunto:'',contacto:'',direccion:'',items:[{id:nid(),tipo:'sofa',cantidad:1,foto:null}]};}
-
-function formHTML(){
-  const f=S.form;
-  return `<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h2 class="serif" style="font-size:19px;font-weight:600;margin:0">Registrar lote</h2>
-      <button class="ghost" id="cancelBtn">✕</button></div>
-    <div class="grid2">
-      <label class="f"><span>Conjunto / edificio</span><input id="f-conjunto" value="${esc(f.conjunto)}" placeholder="Ej. Bellavista Imperial"></label>
-      <label class="f"><span>Contacto (administrador)</span><input id="f-contacto" value="${esc(f.contacto)}" placeholder="Ej. Marta Gómez"></label>
-    </div>
-    <label class="f" style="margin-top:12px"><span>Dirección</span><input id="f-direccion" value="${esc(f.direccion)}" placeholder="Ej. Cra 15 # 100-20"></label>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px">
-      <p class="small" style="margin:0;font-weight:500">Objetos a retirar</p>
-      <button class="ghost" id="addItem">+ Agregar objeto</button></div>
-    ${f.items.map(it=>`<div class="item">
-      <div class="item-top">
-        <label class="f" style="flex:1 1 180px"><span>Tipo de objeto</span>
-          <select data-tipo="${it.id}">${Object.entries(ITEM_TYPES).map(([k,v])=>
-            `<option value="${k}" ${it.tipo===k?'selected':''}>${v.label}</option>`).join('')}</select></label>
-        <label class="f" style="width:96px"><span>Cantidad</span>
-          <input type="number" min="1" value="${it.cantidad}" data-cant="${it.id}"></label>
-        ${f.items.length>1?`<button class="ghost" data-del="${it.id}">✕</button>`:''}
+/* ===================== residente ===================== */
+function resInicio(){
+  const a = activo(), ce = cerrados();
+  const kgDesv = sum(ce.map(m => matsDe(m).desv));
+  const ahorro = sum(ce.map(m => m.ref - m.precio));
+  return `<div class="stack">
+    ${S.flash ? `<div class="flash"><span aria-hidden="true">✓</span><span>${esc(S.flash)}</span></div>` : ''}
+    <div class="headrow">
+      <div>
+        <h2 class="display">Hola, Marcela</h2>
+        <p class="lede">Conjunto Alameda del Bosque · Apto 502, Torre 2 · Suba</p>
       </div>
-      <div style="margin-top:10px">
-        <label class="filelbl">📷 ${it.foto?'Cambiar foto':'Tomar / subir foto'}
-          <input type="file" accept="image/*" data-foto="${it.id}"></label>
-        ${it.foto?`<img class="thumb" src="${it.foto}" alt="">`:''}
-      </div></div>`).join('')}
-    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
-      <button class="ghost" id="cancelBtn2">Cancelar</button>
-      <button class="primary" id="submitBtn">✨ Generar cotización en firme</button></div>
+    </div>
+
+    <div class="active">
+      <div>
+        <span class="pill act">● En camino</span>
+        <div class="t">${esc(a.obj)}</div>
+        <div class="small muted">${esc(a.gestor)} · llega entre 8:00 y 11:00 a.m. · Luis Alberto Gómez, placa WLM-482</div>
+      </div>
+      <div class="actions">
+        <button class="ghost" data-open="${a.id}">Ver seguimiento</button>
+        <button class="ghost">Llamar</button>
+      </div>
+    </div>
+
+    <div class="cta">
+      <div>
+        <h2 class="sec">¿Tienes algo más que sacar?</h2>
+        <p class="small muted" style="margin:5px 0 0;max-width:52ch">Toma una foto y recibe hasta tres ofertas de gestores verificados. Pedir ofertas no cuesta nada.</p>
+      </div>
+      <button class="primary lg" data-sec="solicitar">Solicitar retiro</button>
+    </div>
+
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <div class="headrow" style="align-items:center">
+            <h2 class="sec">Retiros recientes</h2>
+            <button class="linkish" data-sec="retiros">Ver todos</button>
+          </div>
+          <div class="hr"></div>
+          <div class="list">
+            ${ce.slice(0,3).map(m => `<button class="li" data-open="${m.id}">
+              <span>${esc(m.obj)}<span class="s">${esc(m.fecha)} · ${esc(m.gestor)}</span></span>
+              <span class="amt">${money(m.precio)}</span>
+              <span class="pill ok">Certificado</span>
+            </button>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card">
+          <h3 class="sec">Tu impacto</h3>
+          <div class="hr"></div>
+          <div class="badge" style="margin-bottom:10px">
+            <span class="small">Desviado del relleno</span>
+            <span class="mono" style="font-size:19px;color:var(--sage)">${kgDesv} kg</span>
+          </div>
+          <div class="badge">
+            <span class="small">Ahorrado frente al informal</span>
+            <span class="mono" style="font-size:19px">${money(ahorro)}</span>
+          </div>
+          <p class="xs muted" style="margin:12px 0 0">Calculado sobre ${ce.length} retiros con certificado emitido.</p>
+        </div>
+        <div class="trust">
+          <span aria-hidden="true">🛡️</span>
+          <span><b>Gestores verificados.</b> ARL, póliza de responsabilidad civil y RUT vigentes — lo que tu portería exige para dejarlos entrar.</span>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 
-function readForm(){
-  const f=S.form;
-  f.conjunto=document.getElementById('f-conjunto').value;
-  f.contacto=document.getElementById('f-contacto').value;
-  f.direccion=document.getElementById('f-direccion').value;
-  document.querySelectorAll('[data-tipo]').forEach(s=>{
-    const it=f.items.find(i=>i.id==s.dataset.tipo); if(it) it.tipo=s.value;});
-  document.querySelectorAll('[data-cant]').forEach(s=>{
-    const it=f.items.find(i=>i.id==s.dataset.cant); if(it) it.cantidad=Math.max(1,Number(s.value)||1);});
+function resSolicitar(){
+  if (S.paso === 2) return resOfertas();
+  if (S.paso === 3) return resConfirmar();
+  const t = TIPOS[S.tipo];
+  return `<div class="stack">
+    ${prog(1)}
+    <div>
+      <h2 class="display">¿Qué necesitas sacar?</h2>
+      <p class="lede">Entre más claro esté el objeto, más firme es el precio que te ofrecen.</p>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <p class="cap">Tipo de objeto</p>
+          <div class="tiles">
+            ${Object.entries(TIPOS).map(([k,v]) => `
+              <button class="tile" data-tipo="${k}" style="${k===S.tipo?'border-color:var(--petrol);background:#fff':''}">
+                <span class="ic" aria-hidden="true">${v.ic}</span>
+                <span class="t">${esc(v.label)}</span>
+                <span class="s">${esc(v.hint)}</span>
+              </button>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <p class="cap">Fotos</p>
+          <div class="photos">
+            <div class="ph filled" aria-label="Foto cargada">${t.ic}</div>
+            <div class="ph">＋<span>Agregar</span></div>
+            <div class="ph">＋<span>Agregar</span></div>
+          </div>
+          <p class="xs muted" style="margin:10px 0 0">Una foto de frente y una de lado bastan.</p>
+        </div>
+        <div class="card">
+          <p class="cap">Dónde está</p>
+          <div class="grid2">
+            <label class="f"><span>Conjunto o dirección</span><input id="f-dir" value="Conjunto Alameda del Bosque — Suba"></label>
+            <label class="f"><span>Apartamento</span><input id="f-apto" value="502 · Torre 2"></label>
+            <label class="f"><span>¿En qué piso está?</span>
+              <select id="f-piso"><option>Piso 1</option><option>Piso 3</option><option selected>Piso 5</option><option>Piso 8 o más</option></select></label>
+            <label class="f"><span>¿Cabe en el ascensor?</span>
+              <select id="f-asc"><option>Sí, cabe sin problema</option><option selected>No cabe, hay que bajarlo por escaleras</option><option>El edificio no tiene ascensor</option></select></label>
+          </div>
+          <p class="xs muted" style="margin:12px 0 0">Preguntamos por el ascensor porque bajar cinco pisos por escaleras cambia el precio y el tiempo. Si no lo sabes, escribe «no estoy seguro».</p>
+        </div>
+        <div class="card">
+          <p class="cap">Medidas aproximadas</p>
+          <div class="grid3">
+            <label class="f"><span>Alto (cm)</span><input id="f-alto" value="85"></label>
+            <label class="f"><span>Ancho (cm)</span><input id="f-ancho" value="210"></label>
+            <label class="f"><span>Fondo (cm)</span><input id="f-fondo" value="95"></label>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" data-paso="2">Pedir ofertas</button>
+          <span class="xs muted">Sin costo. Recibes respuesta en menos de 2 horas.</span>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card flat">
+          <h3 class="sec">Por qué pedimos esto</h3>
+          <div class="hr"></div>
+          <p class="small muted" style="margin:0 0 10px"><b style="color:var(--ink)">Piso y ascensor.</b> Es lo que más encarece un retiro y lo que una foto no muestra.</p>
+          <p class="small muted" style="margin:0 0 10px"><b style="color:var(--ink)">Medidas.</b> Definen si cabe en una camioneta o hace falta estaca.</p>
+          <p class="small muted" style="margin:0"><b style="color:var(--ink)">Fotos.</b> Permiten al gestor estimar el material aprovechable y bajar el precio.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
-function bindForm(){
-  const cancel=()=>{S.form=null;render();};
-  document.getElementById('cancelBtn').onclick=cancel;
-  document.getElementById('cancelBtn2').onclick=cancel;
-  document.getElementById('addItem').onclick=()=>{
-    readForm(); S.form.items.push({id:nid(),tipo:'sofa',cantidad:1,foto:null}); render();};
-  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
-    readForm(); S.form.items=S.form.items.filter(i=>i.id!=b.dataset.del); render();});
-  document.querySelectorAll('[data-foto]').forEach(inp=>inp.onchange=()=>{
-    const file=inp.files&&inp.files[0]; if(!file)return;
-    readForm();
-    const it=S.form.items.find(i=>i.id==inp.dataset.foto);
-    it.foto=URL.createObjectURL(file); render();});
-  document.getElementById('submitBtn').onclick=()=>{
-    readForm();
-    const f=S.form;
-    if(!f.conjunto.trim()){document.getElementById('f-conjunto').focus();return;}
-    const lot={id:nid(),conjunto:f.conjunto.trim(),contacto:f.contacto.trim(),direccion:f.direccion.trim(),
-      createdAt:new Date(),items:f.items.map(i=>({...i})),status:'cotizado',
-      cotizacion:quote(f.items),clasificacion:null};
-    S.lots.unshift(lot); S.sel=lot.id; S.form=null; render();};
+function resOfertas(){
+  const t = TIPOS[S.tipo], arr = ofertasOrdenadas();
+  const mejor  = GESTORES.slice().sort((a,b) => a.f - b.f)[0];
+  const rapido = GESTORES.slice().sort((a,b) => a.horas - b.horas)[0];
+  return `<div class="stack">
+    ${prog(2)}
+    <div>
+      <h2 class="display">Tres ofertas para tu ${esc(t.label.toLowerCase())}</h2>
+      <p class="lede">Precios en firme: el que elijas es el que pagas el día de la recogida. Si el gestor llega y cambia el precio, CoreCycle cubre la diferencia.</p>
+    </div>
+    <div class="sorts">
+      <button class="chip ${S.orden==='precio'?'on':''}" data-orden="precio">Más barato</button>
+      <button class="chip ${S.orden==='rapidez'?'on':''}" data-orden="rapidez">Más rápido</button>
+      <button class="chip ${S.orden==='calif'?'on':''}" data-orden="calif">Mejor calificado</button>
+    </div>
+    <div class="stack" style="gap:12px">
+      ${arr.map(g => {
+        const best = g.id === mejor.id, fast = g.id === rapido.id;
+        return `<div class="offer ${best?'best':''}">
+          <div>
+            <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+              <h3 class="name">${esc(g.nombre)}</h3>
+              ${best ? '<span class="tag">Mejor precio</span>' : ''}
+              ${fast && !best ? '<span class="tag alt">Más rápido</span>' : ''}
+            </div>
+            <div class="meta">
+              <span>★ ${g.cal.toFixed(1)} · ${g.res} retiros</span>
+              <span>🕑 ${esc(g.ventana)}</span>
+              <span>♻ ${g.aprov}% aprovechado</span>
+            </div>
+            <div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">${verifChips(g)}</div>
+            <p class="quote">${esc(g.quote)}</p>
+          </div>
+          <div class="right">
+            <div class="price">${money(precio(g, S.tipo))}</div>
+            <button class="primary" data-elegir="${g.id}">Elegir</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="ref-line">
+      <span>Lo que cuesta llamando a un solo transportador, sin comparar</span>
+      <span><span class="strike mono">${money(t.ref)}</span> &nbsp;<b class="mono">ahorras ${money(t.ref - precio(mejor, S.tipo))}</b></span>
+    </div>
+    <div class="actions"><button class="ghost" data-paso="1">← Cambiar los datos del objeto</button></div>
+  </div>`;
 }
 
-/* ---------- init ---------- */
-document.getElementById('r-admin').onclick=()=>{S.role='admin';render();};
-document.getElementById('r-ops').onclick=()=>{S.role='ops';S.form=null;render();};
-document.getElementById('newLot').onclick=()=>{S.form=newForm();render();};
+function resConfirmar(){
+  const t = TIPOS[S.tipo], g = gestorById(S.gestor), p = precio(g, S.tipo);
+  return `<div class="stack">
+    ${prog(3)}
+    <div>
+      <h2 class="display">Confirma tu recogida</h2>
+      <p class="lede">Al confirmar generamos la ficha que tu portería necesita para dejar entrar al operario.</p>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <p class="cap">Resumen</p>
+          <div class="row"><span>${esc(t.label)} · 1 unidad</span><span class="muted small">${esc(t.hint)}</span></div>
+          <div class="row"><span>Conjunto Alameda del Bosque · Apto 502</span><span class="muted small">Piso 5, sin ascensor utilizable</span></div>
+          <div class="row"><span>${esc(g.nombre)}</span><span class="muted small">★ ${g.cal.toFixed(1)}</span></div>
+          <div class="row"><span>${esc(g.ventana)}</span><span class="muted small">mañana</span></div>
+          <div class="hr"></div>
+          <div class="row"><b>Precio en firme</b><b class="mono" style="font-size:19px">${money(p)}</b></div>
+          <p class="xs muted" style="margin:8px 0 0">Sin costo adicional para ti. CoreCycle cobra su comisión al gestor, no a ti.</p>
+        </div>
+        <div class="card">
+          <p class="cap">Ficha para portería</p>
+          <div class="gate">
+            <dl>
+              <dt>Operario</dt><dd>Luis Alberto Gómez</dd>
+              <dt>Cédula</dt><dd class="mono">79.541.238</dd>
+              <dt>Vehículo</dt><dd>Estaca blanca · placa <span class="mono">WLM-482</span></dd>
+              <dt>Empresa</dt><dd>${esc(g.nombre)} · NIT 901.447.220-6</dd>
+              <dt>ARL</dt><dd>Vigente hasta 31/12/2026</dd>
+              <dt>Póliza RC</dt><dd>Vigente hasta 18/03/2027</dd>
+              <dt>Ventana</dt><dd>${esc(g.ventana)}</dd>
+            </dl>
+          </div>
+          <div class="actions" style="margin-top:14px">
+            <button class="ghost">Enviar a portería</button>
+            <button class="ghost">Descargar PDF</button>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" data-confirmar="1">Confirmar recogida</button>
+          <button class="ghost" data-paso="2">Volver a las ofertas</button>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card flat">
+          <h3 class="sec">Qué pasa después</h3>
+          <div class="hr"></div>
+          <p class="small muted" style="margin:0 0 9px">1. El gestor confirma y te avisa cuando salga.</p>
+          <p class="small muted" style="margin:0 0 9px">2. Recoge en la ventana acordada.</p>
+          <p class="small muted" style="margin:0 0 9px">3. Clasifica el material en su planta.</p>
+          <p class="small muted" style="margin:0">4. Recibes el certificado de disposición final con el destino verificado.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function resRetiros(){
+  if (S.abierto) return resDetalle();
+  const ce = cerrados();
+  return `<div class="stack">
+    <div class="headrow">
+      <div>
+        <h2 class="display">Mis retiros</h2>
+        <p class="lede">${MIS.length} solicitudes · ${ce.length} con certificado emitido</p>
+      </div>
+      <button class="primary" data-sec="solicitar">Solicitar retiro</button>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Objeto</th><th>Fecha</th><th>Gestor</th><th class="n">Precio</th><th class="n">Kg</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          ${MIS.map(m => `<tr>
+            <td>${esc(m.obj)}</td>
+            <td class="muted">${esc(m.fecha)}</td>
+            <td>${esc(m.gestor)}</td>
+            <td class="n">${money(m.precio)}</td>
+            <td class="n">${matsDe(m).total}</td>
+            <td>${m.estado === 'curso' ? '<span class="pill act">En camino</span>' : '<span class="pill ok">Certificado</span>'}</td>
+            <td><button class="linkish" data-open="${m.id}">${m.estado === 'curso' ? 'Seguir' : 'Ver certificado'}</button></td>
+          </tr>`).join('')}
+        </tbody></table></div>
+    </div>
+  </div>`;
+}
+
+function resDetalle(){
+  const m = MIS.find(x => x.id === S.abierto);
+  if (!m) return resRetiros();
+  if (m.estado === 'curso') return resSeguimiento(m);
+  return resCertificado(m);
+}
+
+function resSeguimiento(m){
+  return `<div class="stack">
+    <button class="linkish" data-open="">← Mis retiros</button>
+    <div>
+      <h2 class="display">${esc(m.obj)}</h2>
+      <p class="lede">${esc(m.gestor)} · llega entre 8:00 y 11:00 a.m. · ${money(m.precio)}</p>
+    </div>
+    <div class="card">${stepsHTML()}</div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <p class="cap">Actividad</p>
+          <div class="tl">
+            <div class="tl-item"><time>09:12</time><span>Operario en portería. Ficha validada por el celador.</span></div>
+            <div class="tl-item"><time>08:40</time><span>Luis Alberto salió de la bodega. Llegada estimada 9:10 a.m.</span></div>
+            <div class="tl-item"><time>07:55</time><span>${esc(m.gestor)} confirmó la ruta del día: 4 retiros en el corredor de Suba.</span></div>
+            <div class="tl-item"><time>Ayer 18:22</time><span>Recogida confirmada por ${money(m.precio)}. Ficha enviada a portería.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card">
+          <p class="cap">Quién viene</p>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="avatar" style="width:38px;height:38px;background:var(--paper);color:var(--ink);font-size:15px">👷</div>
+            <div><div style="font-weight:500">Luis Alberto Gómez</div>
+            <div class="xs muted">${esc(m.gestor)} · placa WLM-482</div></div>
+          </div>
+          <div class="hr"></div>
+          <div class="actions"><button class="ghost">Llamar</button><button class="ghost">Escribir</button></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function resCertificado(m){
+  const {mats, total, desv} = matsDe(m);
+  const max = Math.max(...mats.map(x => x.kg));
+  return `<div class="stack">
+    <button class="linkish" data-open="">← Mis retiros</button>
+    <div>
+      <h2 class="display">Certificado de disposición final</h2>
+      <p class="lede">Puedes archivarlo o enviarlo a la administración del conjunto. Cualquiera puede verificarlo sin tener cuenta en CoreCycle.</p>
+    </div>
+    <div class="ticket">
+      <div class="cert-head">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="logo">♻</div>
+          <div>
+            <div class="serif" style="font-size:18px;font-weight:600">CoreCycle</div>
+            <div class="xs muted mono">${esc(m.id)}</div>
+          </div>
+        </div>
+        ${qrSVG(104)}
+      </div>
+      <div class="hr"></div>
+      <dl class="cert-grid">
+        <dt>Objeto</dt><dd>${esc(m.obj)} · 1 unidad</dd>
+        <dt>Origen</dt><dd>Conjunto Alameda del Bosque · Apto 502 · Suba, Bogotá</dd>
+        <dt>Fecha de retiro</dt><dd>${esc(m.fecha)}</dd>
+        <dt>Gestor</dt><dd>${esc(m.gestor)} · NIT 901.447.220-6</dd>
+        <dt>Planta</dt><dd>Centro de aprovechamiento Cra. 129 #17-40</dd>
+      </dl>
+      <div class="hr"></div>
+      <p class="cap">Destino del material</p>
+      <div class="mat">
+        ${mats.map(x => `<div class="mat-row ${x.final?'final':''}">
+          <span>${x.m}</span>
+          <span class="mat-bar" title="${x.kg} kg — ${esc(x.d)}"><i style="width:${(x.kg/max*100).toFixed(1)}%"></i></span>
+          <span class="n">${x.kg} kg</span></div>`).join('')}
+      </div>
+      <div class="badge" style="margin-top:16px">
+        <span><b>${desv} de ${total} kg</b> desviados del relleno sanitario</span>
+        <span class="mono" style="font-size:20px;color:var(--sage)">${Math.round(desv/total*100)}%</span>
+      </div>
+      <div class="hr"></div>
+      <div class="actions">
+        <button class="ghost">Descargar PDF</button>
+        <button class="ghost">Enviar a la administración</button>
+        <span class="xs muted mono">corecycle.co/v/${esc(m.id)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===================== gestor ===================== */
+function gesTablero(){
+  const fn = [
+    {l:'Vistas de tu ficha',    s:'quién te vio en el marketplace', v:412, pct:null},
+    {l:'Solicitudes recibidas', s:'en tus zonas activas',           v:96,  pct:23},
+    {l:'Ofertas enviadas',      s:'cotizaste a tiempo',             v:71,  pct:74},
+    {l:'Aceptadas',             s:'el residente te eligió',         v:23,  pct:32}
+  ];
+  const perdidas = [{r:'Tu precio fue más alto',p:54},{r:'Tu ventana era más tarde',p:28},{r:'Calificación más baja',p:18}];
+  return `<div class="stack">
+    <div class="headrow">
+      <div>
+        <h2 class="display">EcoRetiro Bogotá</h2>
+        <p class="lede">★ 4,8 · 127 retiros · zonas activas: Suba y Usaquén</p>
+      </div>
+      <span class="verif">✓ <b>Documentación al día</b></span>
+    </div>
+    <div class="alert">
+      <span class="ic" aria-hidden="true">⚠</span>
+      <div><b>Tu póliza de responsabilidad civil vence en 18 días.</b>
+      Sin póliza vigente dejas de aparecer en el marketplace y los conjuntos con reglamento estricto no te dejan entrar.</div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><p class="k">Aceptadas este mes</p><div class="v">23</div><div class="d up">+4 frente a agosto</div></div>
+      <div class="kpi"><p class="k">Ingreso del mes</p><div class="v">$2,81 M</div><div class="d">ticket promedio ${money(TICKET)}</div></div>
+      <div class="kpi"><p class="k">Comisión causada</p><div class="v">$421 K</div><div class="d">15% de lo aceptado</div></div>
+      <div class="kpi"><p class="k">Respuesta promedio</p><div class="v">42 min</div><div class="d up">bajo el promedio (1 h 10)</div></div>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <h2 class="sec">Qué hacen los clientes que entran a tu ficha</h2>
+          <p class="xs muted" style="margin:5px 0 16px">Últimos 30 días. El porcentaje es el paso desde el escalón anterior.</p>
+          <div class="funnel">
+            ${fn.map(f => `<div class="fn">
+              <span class="lab">${f.l}<i>${f.s}</i></span>
+              <span class="track">
+                <span class="fill" style="width:${(f.v/412*100).toFixed(1)}%" title="${f.v}"></span>
+                <span class="n ${f.v/412 < 0.20 ? 'out' : ''}">${f.v}${f.pct !== null ? ` · ${f.pct}%` : ''}</span>
+              </span></div>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <h2 class="sec">Interacciones por día</h2>
+          <p class="xs muted" style="margin:5px 0 16px">Vistas de ficha, últimos 14 días. El pico del día 10 coincide con el fin de mes de trasteos.</p>
+          ${vbars(DIAS, DIAS.map((_,i) => i+1), {peak:true})}
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card">
+          <h3 class="sec">De dónde vienen</h3>
+          <p class="xs muted" style="margin:5px 0 14px">Solicitudes por zona</p>
+          <div class="hbars">
+            ${ZONAS.map(z => `<div class="hb"><span>${z.z}</span>
+              <span class="track"><i style="width:${z.p/38*100}%"></i></span>
+              <span class="n">${z.p}%</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="sec">Por qué perdiste ofertas</h3>
+          <p class="xs muted" style="margin:5px 0 14px">48 ofertas no aceptadas</p>
+          <div class="hbars">
+            ${perdidas.map(p => `<div class="hb" style="grid-template-columns:1fr 1fr 42px"><span>${p.r}</span>
+              <span class="track"><i style="width:${p.p/54*100}%"></i></span>
+              <span class="n">${p.p}%</span></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function gesSolicitudes(){
+  return `<div class="stack">
+    <div class="headrow">
+      <div>
+        <h2 class="display">Solicitudes abiertas</h2>
+        <p class="lede">En tus zonas activas. Cotiza en firme: el residente ve tu precio junto al de los demás.</p>
+      </div>
+      <span class="pill neu">${SOLICITUDES.length} abiertas</span>
+    </div>
+    <div class="stack" style="gap:11px">
+      ${SOLICITUDES.map((s,i) => `<div class="req">
+        <div>
+          <div class="t">${esc(s.t)} — ${esc(s.c)}</div>
+          <div class="m">
+            <span>${esc(s.z)}</span><span>Piso ${s.piso}</span>
+            <span>${s.asc === 'Sí' ? '🛗 Ascensor' : '<span class="warnpill">⚠ ' + esc(s.asc) + '</span>'}</span>
+            <span>${esc(s.hace)}</span>
+            <span>${s.of} ${s.of === 1 ? 'oferta enviada' : 'ofertas enviadas'}</span>
+          </div>
+        </div>
+        <div class="actions">
+          ${i === 0 ? '<input style="width:118px" class="mono" value="$122.000" aria-label="Tu precio"><button class="primary">Enviar</button>'
+                    : '<button class="ghost">Cotizar</button>'}
+        </div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function gesHistorial(){
+  return `<div class="stack">
+    <div>
+      <h2 class="display">Historial</h2>
+      <p class="lede">Seis meses en CoreCycle. El crecimiento vino de mejorar la conversión, no de recibir más solicitudes.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><p class="k">Retiros acumulados</p><div class="v">${sum(GES_MES)}</div><div class="d">desde abril de 2026</div></div>
+      <div class="kpi"><p class="k">Ingreso acumulado</p><div class="v">$10,5 M</div><div class="d">${sum(GES_MES)} retiros × ${money(TICKET)}</div></div>
+      <div class="kpi"><p class="k">Comisión pagada</p><div class="v">$1,57 M</div><div class="d">15% del ingreso</div></div>
+      <div class="kpi"><p class="k">Calificación media</p><div class="v">4,8</div><div class="d up">subió desde 4,4 en abril</div></div>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <h2 class="sec">Retiros aceptados por mes</h2>
+          <p class="xs muted" style="margin:5px 0 16px">Cada mes cerraste más, con el mismo número de zonas activas.</p>
+          ${vbars(GES_MES, MESES, {vals:true, cls:'sage'})}
+        </div>
+        <div class="card">
+          <h2 class="sec">Últimos retiros</h2>
+          <p class="xs muted" style="margin:5px 0 16px">La calificación del residente se publica en tu ficha.</p>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Fecha</th><th>Objeto</th><th>Conjunto</th><th class="n">Precio</th><th class="n">Comisión</th><th class="n">★</th></tr></thead>
+            <tbody>
+              ${RETIROS_GESTOR.map(r => `<tr>
+                <td class="mono">${r.f}</td><td>${esc(r.o)}</td><td>${esc(r.c)}</td>
+                <td class="n">${money(r.p)}</td><td class="n">${money(r.p*0.15)}</td>
+                <td class="n">${r.cal.toFixed(1)}</td></tr>`).join('')}
+            </tbody></table></div>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card flat">
+          <h3 class="sec">Cómo subir en el marketplace</h3>
+          <div class="hr"></div>
+          <p class="small muted" style="margin:0 0 10px"><b style="color:var(--ink)">Responde antes de 1 hora.</b> Las solicitudes se cierran cuando llegan tres ofertas.</p>
+          <p class="small muted" style="margin:0 0 10px"><b style="color:var(--ink)">Agrupa por corredor.</b> Los retiros del mismo sector te dejan cotizar más bajo sin perder margen.</p>
+          <p class="small muted" style="margin:0"><b style="color:var(--ink)">Mantén la documentación vigente.</b> Sin póliza sales del listado ese mismo día.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===================== plataforma ===================== */
+function platConsolidado(){
+  const maxTx = Math.max(...RANKING.map(r => r.tx));
+  return `<div class="stack">
+    <div class="headrow">
+      <div>
+        <h2 class="display">Consolidado</h2>
+        <p class="lede">Septiembre de 2026 · 34 gestores activos en 7 zonas de Bogotá</p>
+      </div>
+      <span class="pill neu">Actualizado hoy, 7:00 a.m.</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><p class="k">Valor transado (GMV)</p><div class="v">$48,2 M</div><div class="d up">+19% frente a agosto</div></div>
+      <div class="kpi"><p class="k">Comisión CoreCycle</p><div class="v">$7,23 M</div><div class="d">15% del GMV</div></div>
+      <div class="kpi"><p class="k">Ticket promedio</p><div class="v">$122 K</div><div class="d down">−32% vs. informal</div></div>
+      <div class="kpi"><p class="k">Conversión global</p><div class="v">31%</div><div class="d">ofertas enviadas → aceptadas</div></div>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <h2 class="sec">Retiros cerrados por mes</h2>
+          <p class="xs muted" style="margin:5px 0 16px">Abril a septiembre de 2026 · ${miles(sum(TX_MES))} retiros acumulados.</p>
+          ${vbars(TX_MES, MESES, {vals:true})}
+        </div>
+        <div class="card">
+          <h2 class="sec">Gestores por retiros cerrados</h2>
+          <p class="xs muted" style="margin:5px 0 16px">La conversión decide quién recibe más solicitudes.</p>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Gestor</th><th></th><th class="n">Retiros</th><th class="n">Conv.</th><th class="n">★</th><th class="n">Comisión</th></tr></thead>
+            <tbody>
+              ${RANKING.map(r => `<tr>
+                <td>${esc(r.n)}</td>
+                <td style="width:28%"><span class="minibar" title="${r.tx} retiros"><i style="width:${(r.tx/maxTx*100).toFixed(0)}%"></i></span></td>
+                <td class="n">${r.tx}</td><td class="n">${r.conv}%</td>
+                <td class="n">${r.cal.toFixed(1)}</td><td class="n">${money(r.com)}</td></tr>`).join('')}
+            </tbody></table></div>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card">
+          <h3 class="sec">Demanda por zona</h3>
+          <p class="xs muted" style="margin:5px 0 14px">Define dónde reclutar gestores</p>
+          <div class="hbars">
+            ${ZONAS.map(z => `<div class="hb"><span>${z.z}</span>
+              <span class="track"><i style="width:${z.p/38*100}%"></i></span>
+              <span class="n">${z.p}%</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="alert">
+          <span class="ic" aria-hidden="true">⚠</span>
+          <div><b>3 gestores con documentación por vencer.</b> Salen del marketplace automáticamente si no renuevan antes del corte.</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function platImpacto(){
+  const retiros = sum(TX_MES);
+  const kgTotal = retiros * KG_RETIRO, kgDesv = retiros * KG_DESV, kgRell = retiros * KG_RELLENO;
+  const porMes = TX_MES.map(t => t * KG_DESV);
+  const maxMat = Math.max(...MATERIALES.map(m => m.kg));
+  return `<div class="stack">
+    <div>
+      <h2 class="display">Impacto</h2>
+      <p class="lede">Cada kilo de esta pantalla viene de un certificado emitido, con gestor, planta y destino identificados.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><p class="k">Desviado del relleno</p><div class="v">${(kgDesv/1000).toFixed(1)} t</div><div class="d">acumulado desde abril</div></div>
+      <div class="kpi"><p class="k">Tasa de aprovechamiento</p><div class="v">${Math.round(kgDesv/kgTotal*100)}%</div><div class="d up">meta interna: 80%</div></div>
+      <div class="kpi"><p class="k">A relleno sanitario</p><div class="v">${(kgRell/1000).toFixed(1)} t</div><div class="d">lo que no se pudo aprovechar</div></div>
+      <div class="kpi"><p class="k">Certificados emitidos</p><div class="v">${miles(retiros)}</div><div class="d">uno por retiro</div></div>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <h2 class="sec">Kilos desviados por mes</h2>
+          <p class="xs muted" style="margin:5px 0 16px">Crece con el número de retiros: la tasa se mantiene estable en ${Math.round(KG_DESV/KG_RETIRO*100)}%.</p>
+          ${vbars(porMes, MESES, {vals:true, cls:'sage', fmt:v => miles(v)})}
+        </div>
+        <div class="card">
+          <h2 class="sec">Destino del material</h2>
+          <p class="xs muted" style="margin:5px 0 16px">Acumulado en kilos. Cada línea tiene un aliado identificado en el certificado.</p>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Material</th><th></th><th class="n">Kilos</th><th>Destino</th><th>Aliado</th></tr></thead>
+            <tbody>
+              ${MATERIALES.map(m => `<tr>
+                <td>${m.m}</td>
+                <td style="width:18%"><span class="minibar"><i style="width:${(m.kg/maxMat*100).toFixed(0)}%;background:${m.final?'var(--ink-soft)':'var(--sage)'}"></i></span></td>
+                <td class="n">${miles(m.kg * retiros)}</td>
+                <td class="small muted">${esc(m.d)}</td>
+                <td class="small">${esc(m.aliado)}</td></tr>`).join('')}
+            </tbody></table></div>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card">
+          <h3 class="sec">Reporte para conjuntos</h3>
+          <div class="hr"></div>
+          <p class="small muted" style="margin:0 0 12px">Cada administración puede descargar el consolidado de su conjunto para llevarlo al consejo o presentarlo ante la autoridad ambiental.</p>
+          <button class="ghost">Generar reporte mensual</button>
+        </div>
+        <div class="card flat">
+          <h3 class="sec">Pesos por tipo</h3>
+          <div class="hr"></div>
+          <p class="small muted" style="margin:0">Los kilos se toman del pesaje en planta que reporta el gestor, no de una estimación por fotografía.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function platPrecios(){
+  const serie = wfSerie();
+  const MAX = 215000;
+  const pct = v => (v / MAX * 100);
+  return `<div class="stack">
+    <div>
+      <h2 class="display">Precios</h2>
+      <p class="lede">Cómo se forma el precio promedio del marketplace frente a la referencia del mercado informal.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><p class="k">Precio promedio</p><div class="v">${money(r1000(FINAL))}</div><div class="d down">−32% vs. referencia informal</div></div>
+      <div class="kpi"><p class="k">Referencia informal</p><div class="v">${money(REF)}</div><div class="d">un solo transportador, sin comparar</div></div>
+      <div class="kpi"><p class="k">Comisión por retiro</p><div class="v">${money(r1000(FINAL*0.15))}</div><div class="d">15% cobrado al gestor</div></div>
+      <div class="kpi"><p class="k">Sin densidad de ruta</p><div class="v">$132.000</div><div class="d">zonas con menos de 3 gestores</div></div>
+    </div>
+    <div class="card">
+      <h2 class="sec">Formación del precio</h2>
+      <p class="xs muted" style="margin:5px 0 4px">Lote de referencia, en pesos</p>
+      <div class="wf-wrap">
+        <div class="wf">
+          ${serie.map((s,i) => {
+            const cls = s.tipo === 'base' ? 'base' : s.tipo === 'down' ? 'down' : 'up';
+            const runAfter = s.tipo === 'base' ? s.hasta : (s.tipo === 'down' ? s.desde : s.hasta);
+            const lbl = s.delta === null ? money(s.hasta) : (s.delta > 0 ? '+' : '−') + money(Math.abs(s.delta));
+            return `<div class="wf-col">
+              <span class="wf-bar ${cls}" style="bottom:${pct(s.desde).toFixed(1)}%;height:${pct(s.hasta - s.desde).toFixed(1)}%" title="${esc(s.lab)}: ${lbl}"></span>
+              <span class="wf-val" style="bottom:${pct(s.hasta).toFixed(1)}%">${lbl}</span>
+              ${i < serie.length - 1 ? `<span class="wf-link" style="bottom:${pct(runAfter).toFixed(1)}%"></span>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="wfx">${serie.map(s => `<span>${esc(s.lab)}</span>`).join('')}</div>
+      </div>
+      <div class="wf-legend">
+        <span><i style="background:var(--petrol)"></i>Precio total</span>
+        <span><i style="background:var(--sage)"></i>Baja el precio</span>
+        <span><i style="background:var(--rust)"></i>Lo sube</span>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="col-main">
+        <div class="card">
+          <h2 class="sec">Qué mueve cada componente</h2>
+          <div class="hr"></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Componente</th><th class="n">Efecto</th><th>Cómo se monitorea</th></tr></thead>
+            <tbody>
+              <tr><td>Competencia entre gestores</td><td class="n">−22%</td><td class="small muted">Dispersión entre la oferta más baja y la más alta por solicitud</td></tr>
+              <tr><td>Aprovechamiento del material</td><td class="n">−12%</td><td class="small muted">Precio de gestores con planta propia frente a solo transporte</td></tr>
+              <tr><td>Densificación de ruta</td><td class="n">−8%</td><td class="small muted">Precio con dos o más retiros el mismo día en el corredor</td></tr>
+              <tr><td>Comisión trasladada</td><td class="n">+7%</td><td class="small muted">Variación del precio ofertado ante cambios en la tarifa de comisión</td></tr>
+            </tbody></table></div>
+        </div>
+      </div>
+      <div class="col-side">
+        <div class="card">
+          <h3 class="sec">Política de precio en firme</h3>
+          <div class="hr"></div>
+          <p class="small muted" style="margin:0 0 10px">El precio aceptado por el residente no puede modificarse el día de la recogida.</p>
+          <p class="small muted" style="margin:0">Si el gestor encuentra condiciones distintas a las declaradas, CoreCycle cubre la diferencia y la reclama por separado.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===================== router ===================== */
+const VISTAS = {
+  res:  {inicio:resInicio, solicitar:resSolicitar, retiros:resRetiros},
+  ges:  {tablero:gesTablero, solicitudes:gesSolicitudes, historial:gesHistorial},
+  plat: {consolidado:platConsolidado, impacto:platImpacto, precios:platPrecios}
+};
+
+function render(){
+  const c = CUENTAS[S.acct];
+  document.getElementById('avatar').textContent = c.ini;
+  document.getElementById('acct').value = S.acct;
+  document.getElementById('tabs').innerHTML = c.secs.map(([id,lab]) =>
+    `<button class="tab ${S.sec===id?'on':''}" data-sec="${id}">${lab}</button>`).join('');
+  document.getElementById('app').innerHTML = VISTAS[S.acct][S.sec]();
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+document.getElementById('acct').addEventListener('change', e => {
+  S.acct = e.target.value;
+  S.sec = CUENTAS[S.acct].secs[0][0];
+  S.abierto = null; S.paso = 1; S.flash = null;
+  render();
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-sec],[data-tipo],[data-orden],[data-elegir],[data-paso],[data-open],[data-confirmar]');
+  if (!t) return;
+  if (t.dataset.sec !== undefined)  { S.sec = t.dataset.sec; S.abierto = null; S.paso = 1; S.flash = null; }
+  if (t.dataset.tipo)               { S.tipo = t.dataset.tipo; }
+  if (t.dataset.orden)              { S.orden = t.dataset.orden; }
+  if (t.dataset.paso)               { S.paso = +t.dataset.paso; }
+  if (t.dataset.elegir)             { S.gestor = t.dataset.elegir; S.paso = 3; }
+  if (t.dataset.open !== undefined) { S.abierto = t.dataset.open || null; S.sec = 'retiros'; }
+  if (t.dataset.confirmar) {
+    S.sec = 'inicio'; S.paso = 1;
+    S.flash = `Recogida confirmada con ${gestorById(S.gestor).nombre}. Enviamos la ficha a portería.`;
+  }
+  render();
+});
+
 render();
 </script>
+
 </body>
 </html>
